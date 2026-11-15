@@ -4,11 +4,11 @@
 The runtime `root::DIRS` list is the single source of truth; this script only
 projects it into the offline skeleton the packaging step uses.
 """
-import io, re, sys
+import io, os, re, sys
 
-ROOT = r"D:\workspace\linkslot"
-SRC = ROOT + r"\crates\slot\src\root.rs"
-OUT = ROOT + r"\build\skeleton.txt"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SRC = os.path.join(ROOT, "crates", "slot", "src", "root.rs")
+OUT = os.path.join(ROOT, "build", "skeleton.txt")
 
 text = io.open(SRC, encoding="utf-8").read()
 start = text.index("pub const DIRS")
