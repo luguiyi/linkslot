@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "kind": "linkSlot.gbastation",
+  "base_url": "",
+  "mode": "two-way",
+  "first_sync": "remote",
+  "on_conflict": "ask",
+  "backup": true,
+  "verify": true,
+  "platforms": ["GBA", "GB", "GBC"],
+  "games": {}
+}

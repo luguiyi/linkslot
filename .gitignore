@@ -1,0 +1,47 @@
+# 构建与产物
+/target
+/target-device
+/target-verify
+/target-brick
+/dist
+/dist-device
+/artifacts
+*.pdb
+**/*.rs.bk
+
+# 运行数据与本地缓存
+/sdcard
+/vendor
+/Extensions
+
+# 规划文档（不入库）
+/.planning
+
+# 本机配置与编辑器
+/.cargo/config.toml
+/.idea/
+/.vscode/
+/.zed/
+.DS_Store
+*.swp
+*~
+Thumbs.db
+desktop.ini
+
+# 日志与临时文件
+*.log
+*.orig
+*.rej
+/NUL
+
+# 根目录打包产物
+/*.tar.gz
+/*.zip
+
+# 手工拷进卡树的编译产物
+/card/System/slot
+/card/System/linkSlot
+
+/build/__pycache__/
+/mods
+/doc

@@ -1,0 +1,20 @@
+[package]
+name = "slot-ui"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+fontdue = { workspace = true }
+png = { workspace = true }
+resvg = { workspace = true }
+usvg = { workspace = true }
+slot-gfx = { path = "../slot-gfx", default-features = false }
+slot-i18n = { path = "../slot-i18n" }
+slot-model = { path = "../slot-model" }
+slot-store = { path = "../slot-store" }
+
+[dev-dependencies]
+slot-gfx = { path = "../slot-gfx", features = ["test-support"] }
+tempfile.workspace = true

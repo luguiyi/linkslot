@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 26.8" width="38" height="26.8">
+  <defs>
+    <pattern id="pins" width="2.2" height="2.2" patternUnits="userSpaceOnUse">
+      <rect x=".4" width="1.4" height="2.2" fill="#b3b3b8"/>
+    </pattern>
+  </defs>
+  <rect x="8" y="3" width="22" height="1.6" fill="url(#pins)"/>
+  <rect x="8" y="22.2" width="22" height="1.6" fill="url(#pins)"/>
+  <rect x="5" y="6.5" width="28" height="14" rx="1" fill="#141414" stroke="#3b3b3b" stroke-width=".5"/>
+  <rect x="8" y="9" width="22" height="9" rx=".4" fill="#242424" stroke="#4a4a4a" stroke-width=".4"/>
+  <path d="M9 6.5 L11.5 8.7 L9 10.9" fill="none" stroke="#505050" stroke-width=".7"/>
+  <circle cx="28.5" cy="19.5" r="1.1" fill="#c8b46a"/>
+  <rect x="21" y="6.5" width="3" height="1.2" fill="#3d3d3d"/>
+</svg>

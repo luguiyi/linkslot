@@ -1,0 +1,20 @@
+[package]
+name = "slot-store"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+unicode-normalization.workspace = true
+serde = { workspace = true }
+serde_json = { workspace = true }
+rusqlite.workspace = true
+slot-i18n = { path = "../slot-i18n" }
+slot-model = { path = "../slot-model" }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

@@ -1,0 +1,1 @@
+Slot Simplified Chinese Regular is a renamed GB2312/UI subset of NotoSansCJKsc-Regular.otf. Modified 2026-10-10. SIL Open Font License 1.1; see Noto-OFL.txt.

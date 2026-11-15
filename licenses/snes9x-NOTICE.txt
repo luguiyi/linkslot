@@ -1,0 +1,6 @@
+﻿snes9x (libretro)
+=================
+Copyright (C) 1996-2025 Snes9x contributors.
+License: GNU General Public License, version 2 or later (见同目录 snes9x-GPL-2.0.txt)。
+Source:  https://github.com/libretro/snes9x
+本项目的构建配方位于 cores/snes9x/，对应源码随发布包分发（System/linkSlot/licenses/snes9x-<commit>.tar.gz）。

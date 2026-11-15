@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title data-i18n="play.documentTitle">在浏览器游玩 · linkSlot</title>
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/play/app.css">
+</head>
+<body class="play">
+  <header class="play-bar">
+    <a class="back" href="/" title="返回管理页" data-i18n-title="play.backTitle">←</a>
+    <h1 id="title" data-i18n="play.loading">载入中…</h1>
+    <span class="badge" id="platform">GBA</span>
+    <span class="pill" id="save-pill" data-i18n="play.saveReadingPill">读取存档…</span>
+    <span class="spacer"></span>
+    <span class="muted" id="host"></span>
+  </header>
+
+  <main class="play-main">
+    <section class="stage">
+      <div id="game"></div>
+      <div class="stage-hint" id="stage-hint" data-i18n="play.stageHint">电池存档自动读取与保存 · 模拟器在浏览器里运行</div>
+    </section>
+
+    <aside class="side">
+      <section class="card">
+        <h2 data-i18n="play.speed">速度</h2>
+        <div class="row" id="speed-row">
+          <button class="chip on" data-speed="1" type="button">1×</button>
+          <button class="chip" data-speed="2" type="button">2×</button>
+          <button class="chip" data-speed="4" type="button">4×</button>
+        </div>
+        <h2 data-i18n="play.display">画面</h2>
+        <div class="row" id="scale-row">
+          <button class="chip on" data-scale="0" type="button" data-i18n="play.scaleFit">自适应</button>
+          <button class="chip" data-scale="2" type="button">2×</button>
+          <button class="chip" data-scale="3" type="button">3×</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="play.input">输入</h2>
+        <p class="muted" id="input-state" data-i18n="play.inputSummary">键盘 + 手柄；手机竖屏出现触屏按键</p>
+        <p class="muted" data-i18n="play.inputSingle">单人：Z/X = B/A · A/S = L/R · 回车 = Start · 退格 = Select</p>
+        <label class="toggle" id="two-player-row" hidden>
+          <input type="checkbox" id="two-player">
+          <span data-i18n="play.twoPlayer">双人同屏（FC）</span>
+        </label>
+        <p class="muted" id="p2-keys" hidden>
+          <span data-i18n="play.p2.p1">P1：</span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> <span data-i18n="play.p2.move">移动</span> · <kbd>J</kbd> B · <kbd>K</kbd> A · <kbd>L</kbd> <span data-i18n="play.p2.turboA">连发 A</span> · <kbd>U</kbd> Select · <kbd>I</kbd> Start<br>
+          <span data-i18n="play.p2.p2">P2：</span><span data-i18n="play.p2.arrowMove">方向键移动</span> · <kbd>1</kbd> B · <kbd>2</kbd> A · <kbd>3</kbd> <span data-i18n="play.p2.turboA">连发 A</span> · <kbd>4</kbd> <span data-i18n="play.p2.turboB">连发 B</span> · <kbd>5</kbd> Select · <kbd>6</kbd> Start
+        </p>
+        <p class="muted" id="pad-state" hidden data-i18n="play.padTwo">手柄 1 → 1P，手柄 2 → 2P</p>
+      </section>
+
+      <section class="card warn">
+        <h2 data-i18n="play.notes">注意</h2>
+        <ul>
+          <li data-i18n="play.note.sameGame">浏览器和掌机不能同时玩同一个游戏。</li>
+          <li data-i18n="play.note.autoSave">电池存档自动读取、自动保存，不用手动操作。</li>
+          <li data-i18n="play.note.firstDownload">首次进入要下载 ROM，局域网一般 3–8 秒。</li>
+        </ul>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="keys">
+    <span><kbd>Z</kbd><kbd>X</kbd> B / A</span>
+    <span><kbd>A</kbd><kbd>S</kbd> L / R</span>
+    <span><kbd>Enter</kbd> Start</span>
+    <span><kbd>Backspace</kbd> Select</span>
+    <span><kbd>P</kbd> <span data-i18n="play.footer.pause">暂停</span></span>
+    <span><kbd>F</kbd> <span data-i18n="play.footer.fastForward">快进</span></span>
+    <span><kbd>F11</kbd> <span data-i18n="play.footer.fullscreen">全屏</span></span>
+    <span id="p2-footer" hidden data-i18n="play.footer.p2">1P WASD + JKL · 2P 方向键 + 数字 1–6</span>
+  </footer>
+
+  <div class="overlay" id="pause" hidden>
+    <div class="pause-box">
+      <h2 data-i18n="play.pause.title">已暂停</h2>
+      <button class="btn accent" data-act="resume" type="button" data-i18n="play.pause.resume">继续游戏</button>
+      <button class="btn" data-act="restart" type="button" data-i18n="play.pause.restart">重启游戏</button>
+      <a class="btn danger" href="/" data-act="exit" data-i18n="play.pause.exit">退出到游戏列表</a>
+    </div>
+  </div>
+
+  <div class="overlay" id="loading">
+    <div class="loading-box">
+      <span class="spinner"></span>
+      <p id="loading-text" data-i18n="play.starting">正在启动模拟器…</p>
+    </div>
+  </div>
+
+  <script src="/play/app.js"></script>
+</body>
+</html>

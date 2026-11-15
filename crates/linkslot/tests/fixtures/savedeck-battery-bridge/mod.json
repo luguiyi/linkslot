@@ -1,0 +1,10 @@
+{
+  "schema": 2,
+  "id": "savedeck-battery-bridge",
+  "name": "SaveDeck 电池存档桥",
+  "version": "1.5.9",
+  "author": "linkSlot",
+  "enabled": false,
+  "order": 100,
+  "category": "sync"
+}

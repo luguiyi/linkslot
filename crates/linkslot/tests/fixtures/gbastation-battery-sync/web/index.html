@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GBAStation 电池存档同步</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <h1>GBAStation 电池存档同步</h1>
+      <p id="modInfo" class="muted">正在连接 linkSlot…</p>
+    </div>
+    <span class="badge">mod 管理页</span>
+  </header>
+
+  <section class="notice">
+    <h2>先读我：长按 Y 会被本 mod 接管</h2>
+    <p>
+      启用本 mod 后，在卡带/存档列表<strong>长按 Y</strong>会执行手动同步，<strong>不再触发原来的云同步</strong>。
+      到 mods 列表停用本 mod，即可恢复原来的长按 Y 云同步。打开或保存本页<strong>不会自动启用 mod</strong>，
+      需要你回 mods 列表打开总开关。保存配置后下一次长按 Y 生效，不需要重启。
+    </p>
+    <p class="muted">
+      只同步 GBA / GB / GBC 的<strong>电池存档</strong>（.sav / .srm），不含即时存档、截图或金手指。
+      GBAStation 与设备必须在同一<strong>可信局域网</strong>；其 Web 服务没有登录口令，请勿暴露到公网。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>GBAStation 连接</h2>
+    <p class="hint">
+      GBAStation 的 Web 管理页会显示访问地址，通常是 <span class="mono">http://IP:8080</span>。
+      只填协议、IP 和端口；保存时只保留来源（origin），路径不会用于本 mod 的 /api 接口。
+    </p>
+    <label class="full">GBAStation Web 地址
+      <input id="baseUrl" type="url" inputmode="url" spellcheck="false"
+             placeholder="http://192.168.1.23:8080" autocomplete="off">
+    </label>
+    <p id="urlHint" class="hint"></p>
+  </section>
+
+  <section class="card">
+    <h2>同步策略</h2>
+    <div class="grid">
+      <label>模式（mode）
+        <select id="mode">
+          <option value="two-way">two-way（双向）</option>
+          <option value="pull">pull（只下载到本机）</option>
+          <option value="push">push（只上传到 GBAStation）</option>
+        </select>
+      </label>
+      <label>首次同步（first_sync）
+        <select id="firstSync">
+          <option value="remote">remote（GBAStation 覆盖本地，推荐）</option>
+          <option value="local">local（本地覆盖 GBAStation）</option>
+          <option value="ask">ask（设备弹窗选择）</option>
+        </select>
+      </label>
+      <label>冲突处理（on_conflict）
+        <select id="onConflict">
+          <option value="ask">ask（设备弹窗选择，最安全）</option>
+          <option value="remote">remote（GBAStation 覆盖本地）</option>
+          <option value="local">local（本地覆盖 GBAStation）</option>
+        </select>
+      </label>
+    </div>
+    <p class="hint">
+      <strong>first_sync</strong>：第一次同步时两边都有不同存档怎么办。
+      <strong>on_conflict</strong>：两边都改过时怎么办。
+      <strong>ask</strong> 在 linkSlot 0.0.29+ 会在设备上弹窗，让你选「用 GBAStation 覆盖本地」或「用本地覆盖 GBAStation」；B 取消不写文件。
+    </p>
+    <div class="checks">
+      <label class="check"><input id="backup" type="checkbox"> 覆盖前写备份（backup）</label>
+      <label class="check"><input id="verify" type="checkbox"> 上传后重新下载并校验 SHA-256（verify）</label>
+    </div>
+    <p class="hint">
+      打开 verify 时，上传后会重新下载远端存档比较哈希（下载不额外回读，由 linkSlot 原子写入）。
+      备份固定写到 <span class="mono">mods/gbastation-battery-sync/backups/&lt;平台&gt;/&lt;key&gt;-local.sav</span>
+      和 <span class="mono">-remote.sav</span>；每次覆盖会替换同名备份。设备没有删除 API，需要保留历史时请手动复制到电脑。
+    </p>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>游戏映射</h2>
+      <button id="addGame" class="btn ghost" type="button">+ 添加映射</button>
+    </div>
+    <p class="hint">
+      可选。左边填 linkSlot 里的游戏名（不含 ROM 扩展名），右边填 GBAStation 的游戏 id、标题或 ROM 文件名。
+      自动匹配失败或匹配到多个游戏时，用这里精确指定。不需要懂 JSON，按行填写即可。
+    </p>
+    <div id="gamesEditor" class="games-editor"></div>
+    <p class="hint">
+      游戏 id 可以包含斜杠或完整路径；本 mod 会把它作为一个路径段编码，不会拼坏 URL。
+      也可以只填 GBAStation 页面里看到的标题。留空行会自动忽略。
+    </p>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>保存配置</h2>
+      <span id="dirty" class="pill">未修改</span>
+    </div>
+    <div class="actions">
+      <button id="save" class="btn primary" type="button">保存配置</button>
+      <button id="reload" class="btn ghost" type="button">重新读取</button>
+    </div>
+    <p id="configStatus" class="status">正在读取 config.json…</p>
+    <p class="hint">
+      配置写入 <span class="mono">mods/gbastation-battery-sync/config.json</span>；页面使用 linkSlot 的受限 bridge，
+      不会直接访问网络。保存时若提示冲突，请先「重新读取」。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>动作状态</h2>
+    <p id="actionStatus" class="hint">正在读取动作状态…</p>
+    <ol class="steps">
+      <li>在 linkSlot 的卡带/存档列表选中要同步的游戏。</li>
+      <li><strong>长按 Y</strong>执行手动动作「电池存档同步」。</li>
+      <li>查看 mod 日志/状态提示；若设备弹窗要求选择冲突方向，用 ↑/↓ 选择、A 确认，B 取消。</li>
+      <li>需要恢复原来的云同步时，到 mods 列表停用本 mod。</li>
+    </ol>
+    <p class="hint">
+      本 mod 的总开关在 mods 列表；动作的开关在安装包中默认为启用。两者都启用时才会执行。
+      如果动作被停用，长按 Y 不会同步，本页会显示具体状态。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>限制与排障</h2>
+    <ul class="notes">
+      <li><strong>上传可能中断：</strong>GBAStation 直接写远端 <span class="mono">&lt;ROM名&gt;.sav</span>。Wi-Fi 不稳定或设备断电可能让远端存档被截断；重要存档请先复制 <span class="mono">backups/</span> 到电脑。</li>
+      <li><strong>finish 或校验失败后：</strong>先检查 GBAStation 里的存档是否完整，必要时用 <span class="mono">backups/&lt;平台&gt;/&lt;key&gt;-remote.sav</span> 恢复；不要立刻再次长按 Y，以免把不完整的远端副本下载到本机。</li>
+      <li><strong>只处理已有游戏：</strong>要同步的游戏必须在 linkSlot 和 GBAStation 两边都存在；本 mod 不导入 ROM、不新建游戏。</li>
+      <li><strong>只有电池存档：</strong>不处理即时存档（.ssN）、截图、金手指或封面。</li>
+      <li><strong>无删除操作：</strong>两边都没有存档时只报告 noop；不会删除任何存档。</li>
+      <li><strong>GBAStation API 可能随版本变化：</strong>如果接口不兼容，会看到 HTTP/JSON 错误，需要更新本 mod。</li>
+      <li><strong>仅可信局域网：</strong>GBAStation Web 服务没有口令；不要把端口转发到公网。</li>
+      <li><strong>排障：</strong>在同网段电脑浏览器打开 <span class="mono">http://IP:端口/api/games</span>，能返回 JSON 才说明地址和 GBAStation 服务正常。</li>
+    </ul>
+  </section>
+
+  <footer class="footer muted">
+    linkSlot · GBAStation 电池存档同步 v1.3.0 · 配置保存在 mod 目录，不会上传到云端
+  </footer>
+
+  <script src="/mod-ui/sdk.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

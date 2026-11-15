@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 163" width="240" height="163">
+  <defs>
+    <pattern id="fingers" width="3.533" height="10" patternUnits="userSpaceOnUse">
+      <rect x=".55" width="2.43" height="10" rx=".4" fill="#d4a93c"/>
+    </pattern>
+    <pattern id="pins" width="2.2" height="2.2" patternUnits="userSpaceOnUse">
+      <rect x=".5" width="1.2" height="2.2" fill="#b3b3b8"/>
+    </pattern>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".24"/>
+      <stop offset=".28" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Mega Drive cassette: wide rounded shell, charcoal plastic. -->
+  <path fill="#fe01fe" d="M18 0 H222 Q240 0 240 18 V148 Q240 163 226 163 H14 Q0 163 0 148 V18 Q0 0 18 0 Z"/>
+  <path fill="#fe02fe" d="M19 3 H221 Q237 3 237 18 V148 Q237 160 225 160 H15 Q3 160 3 148 V18 Q3 3 19 3 Z"/>
+  <path fill="#fe03fe" d="M6 7 H234 V156 H6 Z"/>
+  <rect x="6" y="7" width="228" height="149" fill="url(#shade)"/>
+
+  <!-- Main PCB. -->
+  <path fill="#2f7f31" d="M10 10 H230 V150 H10 Z"/>
+  <path fill="#3a9a3c" d="M11 12 H229 V148 H11 Z"/>
+  <path fill="#2f7f31" d="M12 14 H228 V146 H12 Z"/>
+
+  <!-- Top locating notch, through shell and PCB. -->
+  <rect x="102" y="-2" width="36" height="18" rx="6" fill="#070a0e"/>
+
+  <!-- Small core socket, left side. The app draws the socket art and the
+       selected core chip over this recess. -->
+  <rect x="16" y="28" width="48" height="52" rx="4" fill="#143a18" stroke="#6cc463" stroke-width=".8"/>
+  <rect x="19" y="31" width="42" height="46" rx="3" fill="#0b1116"/>
+  <rect x="20" y="28" width="40" height="2.4" fill="url(#pins)"/>
+  <rect x="20" y="77.6" width="40" height="2.4" fill="url(#pins)"/>
+
+  <!-- The largest central recess is the game-name marking, like the other
+       PCBs. The ROM marking face is stamped over it at runtime. -->
+  <rect x="68" y="56" width="112" height="54" rx="4" fill="#1a1a1a" stroke="#6cc463" stroke-width=".5"/>
+  <rect x="72" y="60" width="104" height="46" rx="2" fill="#202020"/>
+
+  <!-- Edge connector: Mega Drive's long bottom fingers. -->
+  <rect x="22" y="146" width="196" height="13" fill="url(#fingers)"/>
+  <rect x="22" y="146" width="196" height="2" fill="#a87a28"/>
+
+  <!-- Cartridge screws and board marks. -->
+  <circle cx="15" cy="148" r="4" fill="#d4a93c"/>
+  <circle cx="225" cy="148" r="4" fill="#d4a93c"/>
+  <circle cx="15" cy="18" r="3" fill="#8a8f96"/>
+  <circle cx="225" cy="18" r="3" fill="#8a8f96"/>
+
+  <!-- Quiet PCB traces, kept away from the recesses and the fingers. -->
+  <path d="M82 40 H112 M82 44 H112 M180 40 H214 M180 44 H214" stroke="#63b968" stroke-width="1.2" fill="none"/>
+  <path d="M28 118 H58 M180 118 H214" stroke="#63b968" stroke-width="1.2" fill="none"/>
+  <path d="M28 122 H54 M184 122 H214" stroke="#4c9e50" stroke-width="1" fill="none"/>
+</svg>

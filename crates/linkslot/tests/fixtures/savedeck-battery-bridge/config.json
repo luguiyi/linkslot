@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "kind": "linkSlot.savedeck",
+  "profile": "",
+  "mode": "two-way",
+  "match_by_name": true,
+  "on_conflict": "ask",
+  "allow_create": false,
+  "batch": 8,
+  "platforms": ["GBA", "GB", "GBC"],
+  "platform_map": {
+    "GBA hack": "GBA"
+  },
+  "aliases": {}
+}

@@ -1,0 +1,10 @@
+{
+  "schema": 2,
+  "id": "gbastation-battery-sync",
+  "name": "GBAStation 电池存档同步",
+  "version": "1.3.9",
+  "author": "linkSlot",
+  "enabled": false,
+  "order": 100,
+  "category": "sync"
+}

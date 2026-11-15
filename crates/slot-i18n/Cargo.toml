@@ -1,0 +1,10 @@
+[package]
+name = "slot-i18n"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Runtime translation tables for slot / linkSlot"
+
+[dependencies]
+serde_json.workspace = true

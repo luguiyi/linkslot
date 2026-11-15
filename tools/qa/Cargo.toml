@@ -1,0 +1,15 @@
+[package]
+name = "slot-zh-qa"
+version = "0.1.0"
+edition = "2021"
+[workspace]
+[dependencies]
+resvg = { version = "0.48", default-features = false }
+usvg = { version = "0.48", default-features = false }
+slot-input = { path = "../../crates/slot-input" }
+slot-ui = { path = "../../crates/slot-ui" }
+slot-gfx = { path = "../../crates/slot-gfx", default-features = false, features = ["test-support"] }
+slot-store = { path = "../../crates/slot-store" }
+libloading = "0.8.9"
+png = "0.17.16"
+gl = "0.14.0"

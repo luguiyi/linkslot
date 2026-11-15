@@ -1,0 +1,181 @@
+linkSlot CLI（crates/linkslot）依赖与许可证清单
+==================================================
+
+生成方式：cargo metadata --features linkslot/tls-rustls（Rust 1.96.1 / Cargo 1.96.1）。
+设备发行构建另启用 mods（--features linkslot/tls-rustls,mods），其附加依赖见文件末尾
+“mods 功能附加依赖”一节。
+发行包在 System/linkSlot/licenses/ 中随附本清单；每个 crate 的完整许可证文本以其上游仓库为准。
+本文件由构建时的依赖图生成（不含 dev-dependencies），更新依赖后应重新生成。
+
+直接或间接依赖共 68 个（tls-rustls 依赖图，不含 mods 运行时）：
+
+base64                   0.23.1                         MIT OR Apache-2.0
+block-buffer             0.10.4                         MIT OR Apache-2.0
+bytes                    1.12.1                         MIT
+cc                       1.4.2                          MIT OR Apache-2.0
+cfg-if                   1.0.4                          MIT OR Apache-2.0
+cpufeatures              0.2.17                         MIT OR Apache-2.0
+crypto-common            0.1.7                          MIT OR Apache-2.0
+digest                   0.10.7                         MIT OR Apache-2.0
+equivalent               1.0.2                          Apache-2.0 OR MIT
+find-msvc-tools          0.1.10                         MIT OR Apache-2.0
+generic-array            0.14.7                         MIT
+getrandom                0.2.17                         MIT OR Apache-2.0
+getrandom                0.4.3                          MIT OR Apache-2.0
+hashbrown                0.17.1                         MIT OR Apache-2.0
+http                     1.5.0                          MIT OR Apache-2.0
+httparse                 1.10.1                         MIT OR Apache-2.0
+indexmap                 2.14.0                         Apache-2.0 OR MIT
+itoa                     1.0.18                         MIT OR Apache-2.0
+jobserver                0.1.35                         MIT OR Apache-2.0
+libc                     0.2.189                        MIT OR Apache-2.0
+log                      0.4.33                         MIT OR Apache-2.0
+memchr                   2.8.3                          Unlicense OR MIT
+once_cell                1.21.4                         MIT OR Apache-2.0
+percent-encoding         2.3.2                          MIT OR Apache-2.0
+proc-macro2              1.0.107                        MIT OR Apache-2.0
+quote                    1.0.47                         MIT OR Apache-2.0
+r-efi                    6.0.0                          MIT OR Apache-2.0 OR LGPL-2.1-or-later
+ring                     0.17.14                        Apache-2.0 AND ISC
+rustls                   0.23.46                        Apache-2.0 OR ISC OR MIT
+rustls-pemfile           2.2.0                          Apache-2.0 OR ISC OR MIT
+rustls-pki-types         1.15.1                         MIT OR Apache-2.0
+rustls-webpki            0.103.16                       ISC
+serde                    1.0.229                        MIT OR Apache-2.0
+serde_core               1.0.229                        MIT OR Apache-2.0
+serde_derive             1.0.229                        MIT OR Apache-2.0
+serde_json               1.0.154                        MIT OR Apache-2.0
+serde_spanned            1.1.2                          MIT OR Apache-2.0
+sha2                     0.10.9                         MIT OR Apache-2.0
+shlex                    2.0.1                          MIT OR Apache-2.0
+subtle                   2.6.1                          BSD-3-Clause
+syn                      3.0.3                          MIT OR Apache-2.0
+toml                     0.9.12+spec-1.1.0              MIT OR Apache-2.0
+toml_datetime            0.7.5+spec-1.1.0               MIT OR Apache-2.0
+toml_parser              1.1.3+spec-1.1.0               MIT OR Apache-2.0
+toml_writer              1.1.3+spec-1.1.0               MIT OR Apache-2.0
+typenum                  1.20.1                         MIT OR Apache-2.0
+unicode-ident            1.0.24                         (MIT OR Apache-2.0) AND Unicode-3.0
+untrusted                0.9.0                          ISC
+ureq                     3.4.2                          MIT OR Apache-2.0
+ureq-proto               0.6.5                          MIT OR Apache-2.0
+utf8-zero                0.8.1                          MIT OR Apache-2.0
+version_check            0.9.5                          MIT/Apache-2.0
+wasi                     0.11.1+wasi-snapshot-preview1  Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT
+webpki-roots             1.0.10                         CDLA-Permissive-2.0
+windows-sys              0.52.0                         MIT OR Apache-2.0
+windows-targets          0.52.6                         MIT OR Apache-2.0
+windows_aarch64_gnullvm  0.52.6                         MIT OR Apache-2.0
+windows_aarch64_msvc     0.52.6                         MIT OR Apache-2.0
+windows_i686_gnu         0.52.6                         MIT OR Apache-2.0
+windows_i686_gnullvm     0.52.6                         MIT OR Apache-2.0
+windows_i686_msvc        0.52.6                         MIT OR Apache-2.0
+windows_x86_64_gnu       0.52.6                         MIT OR Apache-2.0
+windows_x86_64_gnullvm   0.52.6                         MIT OR Apache-2.0
+windows_x86_64_msvc      0.52.6                         MIT OR Apache-2.0
+winnow                   0.7.15                         MIT
+winnow                   1.0.4                          MIT
+zeroize                  1.9.1                          Apache-2.0 OR MIT
+zmij                     1.0.23                         MIT
+
+仓库：
+base64 0.23.1: https://github.com/marshallpierce/rust-base64
+block-buffer 0.10.4: https://github.com/RustCrypto/utils
+bytes 1.12.1: https://github.com/tokio-rs/bytes
+cc 1.4.2: https://github.com/rust-lang/cc-rs
+cfg-if 1.0.4: https://github.com/rust-lang/cfg-if
+cpufeatures 0.2.17: https://github.com/RustCrypto/utils
+crypto-common 0.1.7: https://github.com/RustCrypto/traits
+digest 0.10.7: https://github.com/RustCrypto/traits
+equivalent 1.0.2: https://github.com/indexmap-rs/equivalent
+find-msvc-tools 0.1.10: https://github.com/rust-lang/cc-rs
+generic-array 0.14.7: https://github.com/fizyk20/generic-array.git
+getrandom 0.2.17: https://github.com/rust-random/getrandom
+getrandom 0.4.3: https://github.com/rust-random/getrandom
+hashbrown 0.17.1: https://github.com/rust-lang/hashbrown
+http 1.5.0: https://github.com/hyperium/http
+httparse 1.10.1: https://github.com/seanmonstar/httparse
+indexmap 2.14.0: https://github.com/indexmap-rs/indexmap
+itoa 1.0.18: https://github.com/dtolnay/itoa
+jobserver 0.1.35: https://github.com/rust-lang/jobserver-rs
+libc 0.2.189: https://github.com/rust-lang/libc
+log 0.4.33: https://github.com/rust-lang/log
+memchr 2.8.3: https://github.com/BurntSushi/memchr
+once_cell 1.21.4: https://github.com/matklad/once_cell
+percent-encoding 2.3.2: https://github.com/servo/rust-url/
+proc-macro2 1.0.107: https://github.com/dtolnay/proc-macro2
+quote 1.0.47: https://github.com/dtolnay/quote
+r-efi 6.0.0: https://github.com/r-efi/r-efi
+ring 0.17.14: https://github.com/briansmith/ring
+rustls 0.23.46: https://github.com/rustls/rustls
+rustls-pemfile 2.2.0: https://github.com/rustls/pemfile
+rustls-pki-types 1.15.1: https://github.com/rustls/pki-types
+rustls-webpki 0.103.16: https://github.com/rustls/webpki
+serde 1.0.229: https://github.com/serde-rs/serde
+serde_core 1.0.229: https://github.com/serde-rs/serde
+serde_derive 1.0.229: https://github.com/serde-rs/serde
+serde_json 1.0.154: https://github.com/serde-rs/json
+serde_spanned 1.1.2: https://github.com/toml-rs/toml
+sha2 0.10.9: https://github.com/RustCrypto/hashes
+shlex 2.0.1: https://github.com/comex/rust-shlex
+subtle 2.6.1: https://github.com/dalek-cryptography/subtle
+syn 3.0.3: https://github.com/dtolnay/syn
+toml 0.9.12+spec-1.1.0: https://github.com/toml-rs/toml
+toml_datetime 0.7.5+spec-1.1.0: https://github.com/toml-rs/toml
+toml_parser 1.1.3+spec-1.1.0: https://github.com/toml-rs/toml
+toml_writer 1.1.3+spec-1.1.0: https://github.com/toml-rs/toml
+typenum 1.20.1: https://github.com/paholg/typenum
+unicode-ident 1.0.24: https://github.com/dtolnay/unicode-ident
+untrusted 0.9.0: https://github.com/briansmith/untrusted
+ureq 3.4.2: https://github.com/algesten/ureq
+ureq-proto 0.6.5: https://github.com/algesten/ureq-proto
+utf8-zero 0.8.1: https://github.com/algesten/utf8-zero
+version_check 0.9.5: https://github.com/SergioBenitez/version_check
+wasi 0.11.1+wasi-snapshot-preview1: https://github.com/bytecodealliance/wasi
+webpki-roots 1.0.10: https://github.com/rustls/webpki-roots
+windows-sys 0.52.0: https://github.com/microsoft/windows-rs
+windows-targets 0.52.6: https://github.com/microsoft/windows-rs
+windows_aarch64_gnullvm 0.52.6: https://github.com/microsoft/windows-rs
+windows_aarch64_msvc 0.52.6: https://github.com/microsoft/windows-rs
+windows_i686_gnu 0.52.6: https://github.com/microsoft/windows-rs
+windows_i686_gnullvm 0.52.6: https://github.com/microsoft/windows-rs
+windows_i686_msvc 0.52.6: https://github.com/microsoft/windows-rs
+windows_x86_64_gnu 0.52.6: https://github.com/microsoft/windows-rs
+windows_x86_64_gnullvm 0.52.6: https://github.com/microsoft/windows-rs
+windows_x86_64_msvc 0.52.6: https://github.com/microsoft/windows-rs
+winnow 0.7.15: https://github.com/winnow-rs/winnow
+winnow 1.0.4: https://github.com/winnow-rs/winnow
+zeroize 1.9.1: https://github.com/RustCrypto/utils
+zmij 1.0.23: https://github.com/dtolnay/zmij
+
+mods 功能附加依赖（linkslot --features mods，设备发行构建）
+==================================================
+
+mods 是可选 Lua 脚本运行时。主机默认构建和 linkslot:test 不启用它，因此
+不引入下表依赖、也不要求 C 工具链；设备发行构建（task build:linkslot:device）
+启用 tls-rustls,mods，发行包因此同时包含以下组件。
+
+直接相关的关键依赖：
+
+mlua                     0.11.6                         MIT
+mlua-sys                 0.10.0                         MIT
+lua-src                  550.0.0                        MIT（内置 Lua 5.4.8）
+roxmltree                0.21.1                         MIT OR Apache-2.0
+slot-mods                0.1.0                          GPL-3.0-or-later（本仓库 crate）
+
+仓库：
+mlua 0.11.6: https://github.com/mlua-rs/mlua
+mlua-sys 0.10.0: https://github.com/mlua-rs/mlua
+lua-src 550.0.0: https://github.com/mlua-rs/lua-src-rs
+Lua 5.4.8: https://www.lua.org/
+roxmltree 0.21.1: https://github.com/RazrFalcon/roxmltree
+
+说明：
+- mlua 及其底层 mlua-sys、lua-src 均为 MIT；vendored Lua 5.4.8 的 Lua 自身
+  许可亦为 MIT，全文随 lua-src 的 LICENSE 提供。
+- roxmltree 仅用于解析 WebDAV PROPFIND 的 XML 响应，MIT 或 Apache-2.0 任选其一。
+- slot-mods 是本仓库的纯 Rust 清单/配置 crate（不含 Lua 和网络依赖），与
+  linkSlot 本体同为 GPL-3.0-or-later；全文见仓库根目录 LICENSE。
+- 启用 mods 后还会引入 mlua 的常规传递依赖（bstr、either、libc、num-traits、
+  rustc-hash、rustversion、serde-value、parking_lot 等），许可证多为
+  MIT OR Apache-2.0；完整组件和版本以 Cargo.lock 及 cargo metadata 为准。

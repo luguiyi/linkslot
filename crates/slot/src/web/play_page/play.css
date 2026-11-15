@@ -1,0 +1,255 @@
+/* Browser play page.  Same palette as the management UI, but everything is
+   optimised for the game: no sidebar, no scrolling, key hints at the bottom. */
+:root {
+  --bg: #14141f;
+  --surface: #1a1a2e;
+  --panel: #242438;
+  --border: #3a3a55;
+  --text: #e8e8f0;
+  --muted: #8888a8;
+  --text-muted: #5a5a78;
+  --accent: #00d4aa;
+  --accent-soft: rgba(0, 212, 170, 0.12);
+  --ok: #00e676;
+  --warn: #ffa726;
+  --danger: #ff4560;
+  --radius: 14px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+body.play {
+  display: grid;
+  grid-template-rows: 52px 1fr auto;
+  min-height: 100%;
+}
+
+.mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.muted { color: var(--muted); }
+.spacer { flex: 1; }
+
+.play-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.play-bar h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40vw;
+}
+
+.back {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.back:hover { background: var(--panel); color: var(--text); }
+
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: #101c26;
+  background: var(--accent);
+}
+
+.pill {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  white-space: nowrap;
+}
+.pill[hidden] { display: none; }
+.pill.ok { background: rgba(0, 230, 118, .12); color: var(--ok); }
+.pill.warn { background: rgba(255, 167, 38, .12); color: var(--warn); }
+.pill.bad { background: rgba(255, 69, 96, .12); color: var(--danger); }
+
+.play-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+  padding: 16px;
+  min-height: 0;
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  background: #0c0c14;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.stage-hint {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  font-size: 10px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* EmulatorJS injects its own canvas and menu; keep the canvas crisp and the
+   chrome quiet. */
+#game { width: 100%; height: 100%; }
+#game canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+#game .ejs_parent { background: #0c0c14 !important; }
+#game .ejs_menu_bar { font-size: 12px; }
+
+.side { display: flex; flex-direction: column; gap: 12px; overflow: auto; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+.card h2 { margin: 0 0 8px; font-size: 13px; font-weight: 600; }
+.card h2 + h2 { margin-top: 14px; }
+.card p { margin: 0 0 8px; font-size: 11px; }
+.card ul { margin: 0; padding-left: 16px; font-size: 11px; color: var(--muted); }
+.card.warn h2 { color: var(--warn); }
+.card .note { font-size: 10px; color: var(--text-muted); margin-top: 8px; }
+.card .mono { font-size: 10px; word-break: break-all; }
+
+.btn {
+  display: inline-block;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.accent { background: var(--accent); border-color: var(--accent); color: #101c26; font-weight: 600; }
+.btn.danger { color: var(--danger); }
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 6px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+}
+.toggle[hidden] { display: none; }
+.toggle input { accent-color: var(--accent); }
+
+.row { display: flex; gap: 6px; }
+.chip {
+  flex: 1;
+  padding: 6px 0;
+  font: inherit;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.chip.on { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+.keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+}
+.keys kbd {
+  display: inline-block;
+  margin-right: 4px;
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 10px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 8, 12, .72);
+  z-index: 20;
+}
+.overlay[hidden] { display: none; }
+
+.pause-box, .loading-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pause-box h2, .loading-box p { margin: 0; }
+.pause-box > p { margin: 0 0 4px; font-size: 10px; word-break: break-all; }
+
+.loading-box { align-items: center; text-align: center; }
+
+.spinner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid var(--panel);
+  border-top-color: var(--accent);
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 900px) {
+  body.play { grid-template-rows: 48px 1fr auto; }
+  .play-main { grid-template-columns: 1fr; padding: 10px; gap: 10px; }
+  .stage { min-height: 240px; }
+  .side { display: none; }
+  .keys { display: none; }
+}

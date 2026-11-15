@@ -1,0 +1,20 @@
+linkSlot v1.0.0
+Copyright (C) 2026 luguiyi691
+
+Project home: https://github.com/luguiyi/linkslot
+
+Based on slot v1.6.0 (released 2026-10-10)
+  https://github.com/slot-cfw/slot  (formerly github.com/BrandonKowalski/slot)
+  Upstream author: Brandon Kowalski and slot-cfw contributors.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.  See LICENSE for the full text.
+
+The Rust frontend was originally produced with AI assistance; the upstream
+README carries the original disclosure.  Documentation in this repository is
+maintained by the linkSlot project.
+
+Third-party components keep their own licences; see licenses/ and the
+System/licenses/ tree that ships with the SD card package.

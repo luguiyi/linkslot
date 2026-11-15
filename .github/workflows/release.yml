@@ -1,0 +1,77 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: h700 package
+    runs-on: ubuntu-24.04-arm
+    container: rust:1.96-bullseye
+    outputs:
+      zip: ${{ steps.package.outputs.zip }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          set -eu
+          apt-get update
+          apt-get install -y --no-install-recommends python3 file zip unzip cmake make g++ git curl
+          rm -rf /var/lib/apt/lists/*
+
+      # 核心由 build/fetch-cores.sh 按 manifest/cores.toml 取/编。
+      # 注意：supafaust 目前没有许可证与固定下载源，verify --release 会失败——
+      # 这是有意的发布门槛，补齐后才允许发版（见 P6-04）。
+      - name: Build the card tree
+        run: sh build/dist.sh h700 --out artifacts/linkslot
+
+      - name: Verify (release gate)
+        run: sh build/verify.sh artifacts/linkslot --release
+
+      - name: Package
+        id: package
+        run: |
+          set -eu
+          version=$(python3 -c 'import json;print(json.load(open("artifacts/linkslot/version.json"))["version"])')
+          zip="linkslot-v${version}-h700.zip"
+          python3 build/package.py --dir artifacts/linkslot --out "artifacts/$zip"
+          echo "zip=$zip" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.zip }}
+          path: artifacts/${{ steps.package.outputs.zip }}
+          if-no-files-found: error
+
+  publish:
+    name: release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.zip }}
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ZIP: ${{ needs.build.outputs.zip }}
+        run: |
+          set -eu
+          cat > notes.md <<notes
+          Unzip and copy the contents of the folder inside onto SD2.
+
+          Based on slot v1.6.0 (GPL-3.0-or-later). Licences, core patches and the
+          corresponding source for the GPL cores ship in \`System/linkSlot/licenses/\`.
+          notes
+          gh release create "$GITHUB_REF_NAME" "$ZIP" --repo "$GITHUB_REPOSITORY" \
+            --title "$GITHUB_REF_NAME" --notes-file notes.md

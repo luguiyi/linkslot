@@ -1,0 +1,12 @@
+[package]
+name = "slot-power"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+slot-model = { path = "../slot-model" }
+
+[dev-dependencies]
+tempfile = { workspace = true }

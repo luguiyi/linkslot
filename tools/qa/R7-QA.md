@@ -1,0 +1,1 @@
+Set SLOT_TEST_ANGLE to an ANGLE DLL folder and SLOT_CHEAT_TEST_ROOT to the extracted runtime Cheats/GBA folder. Run cargo run --release from tools/qa. The QA runner exercises actual store/input/UI/GLES implementations. Hardware input/power and per-ROM cheat correctness still require device testing.

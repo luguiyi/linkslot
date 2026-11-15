@@ -1,0 +1,4 @@
+# linkSlot 主题
+# preset 可选：default（默认深色）/ web（网络青）/ warm（复古暖色）
+# 改完保存后重启生效。旧版的 housing / recess / opening / edge 仍可写在下面覆盖。
+preset default

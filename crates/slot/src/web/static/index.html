@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#1a1a2e">
+<title data-i18n="web.page.title">linkSlot · Slot 掌机管理</title>
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="topbar">
+    <div class="brand">
+      <span class="logo"><img src="/icon.svg" alt=""></span>
+      <span class="brand-text">
+        <span class="brand-name">linkSlot</span>
+        <span class="brand-sub" data-i18n="web.page.brandSub">Slot 掌机管理</span>
+      </span>
+      <span class="version" id="slotVersion">v—</span>
+    </div>
+    <div class="topbar-right">
+      <span class="status-chip" id="statusChip"><i class="dot"></i><span id="statusText" data-i18n="web.shell.connecting">连接中…</span></span>
+      <span class="version mono" id="linkslotVersion" title="linkSlot CLI 版本" data-i18n-title="web.shell.cliVersionTitle">CLI —</span>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs" aria-label="页面导航" data-i18n-aria="web.nav.aria">
+    <a class="tab" href="#overview" data-tab="overview" data-i18n="web.nav.overview">概览</a>
+    <a class="tab" href="#roms" data-tab="roms" data-i18n="web.nav.roms">游戏库</a>
+    <a class="tab" href="#saves" data-tab="saves" data-i18n="web.nav.saves">存档</a>
+    <a class="tab" href="#files" data-tab="files" data-i18n="web.nav.files">文件</a>
+    <a class="tab" href="#sync" data-tab="sync" data-i18n="web.nav.sync">云同步</a>
+    <a class="tab" href="#mods" data-tab="mods" data-i18n="web.nav.mods">mods</a>
+    <a class="tab" href="#network" data-tab="network" data-i18n="web.nav.network">网络</a>
+    <a class="tab" href="#settings" data-tab="settings" data-i18n="web.nav.settings">设置</a>
+    <a class="tab" href="#about" data-tab="about" data-i18n="web.nav.about">关于</a>
+  </nav>
+</header>
+
+<main class="container">
+  <div class="banner warn hidden" id="writeBanner" role="status" data-i18n="web.banner.readonly">
+    设备正在游戏中或同步中，当前为只读状态：可以浏览游戏库、文件与下载存档，暂不能上传、保存设置或发起同步。
+  </div>
+
+  <!-- ============================ 概览 ============================ -->
+  <section class="page" data-page="overview">
+    <div class="grid stats">
+      <div class="card stat">
+        <span class="k">WiFi</span>
+        <span class="v" id="ovWifi">—</span>
+        <span class="sub" id="ovIp">—</span>
+      </div>
+      <div class="card stat">
+        <span class="k" data-i18n="web.overview.address">访问地址</span>
+        <span class="v small mono" id="ovUrl">—</span>
+        <span class="sub" data-i18n="web.overview.addressHint">手机与电脑连接同一 WiFi 后打开</span>
+      </div>
+      <div class="card stat">
+        <span class="k" data-i18n="web.overview.units">游戏</span>
+        <span class="v" id="ovGames">—</span>
+        <span class="sub" id="ovCounts" data-i18n="web.overview.unitsValue">即时存档 — · 电池存档 —</span>
+      </div>
+      <div class="card stat">
+        <span class="k" data-i18n="web.overview.playtime">游戏总时长</span>
+        <span class="v small" id="ovPlaytime">—</span>
+        <span class="sub" data-i18n="web.overview.playtimeHint">所有游戏跨设备累计</span>
+      </div>
+      <div class="card stat">
+        <span class="k" data-i18n="web.overview.device">设备状态</span>
+        <span class="v" id="ovWritable">—</span>
+        <span class="sub" id="ovUptime" data-i18n="web.overview.uptime">已运行 —</span>
+      </div>
+    </div>
+
+    <div class="grid cols-2">
+      <section class="card">
+        <h2 data-i18n="web.overview.versions">设备与版本</h2>
+        <div class="kv"><span data-i18n="web.overview.slotVersion">Slot 版本</span><b id="ovVersion">—</b></div>
+        <div class="kv"><span>linkSlot CLI</span><b id="ovLinkVersion">—</b></div>
+        <div class="kv"><span data-i18n="web.overview.states">状态存档</span><b id="ovStates">—</b></div>
+        <div class="kv"><span data-i18n="web.overview.battery">电池存档</span><b id="ovBattery">—</b></div>
+        <div class="kv"><span data-i18n="web.overview.serviceUrl">服务地址</span><b class="mono small" id="ovUrl2">—</b></div>
+      </section>
+      <section class="card">
+        <h2><span data-i18n="web.overview.recentLog">最近日志</span> <button class="btn ghost small" type="button" id="ovRefreshLog" data-i18n="web.common.refresh">刷新</button></h2>
+        <pre class="log" id="recentLog" data-i18n="web.common.noLog">暂无日志</pre>
+      </section>
+    </div>
+  </section>
+
+  <!-- ============================ 游戏库 ============================ -->
+  <section class="page" data-page="roms" hidden>
+    <div class="toolbar rom-toolbar">
+      <button class="btn" type="button" id="refreshRoms" data-i18n="web.roms.refresh">刷新游戏库</button>
+      <span class="muted small" id="romsSummary" data-i18n="web.common.reading">正在读取…</span>
+      <div class="rom-filters" id="romFilters" aria-label="平台筛选" data-i18n-aria="web.roms.filterAria">
+        <button class="chip active" type="button" data-platform="" data-i18n="web.common.all">全部</button>
+        <button class="chip" type="button" data-platform="GBA">GBA</button>
+        <button class="chip" type="button" data-platform="GB">GB</button>
+        <button class="chip" type="button" data-platform="GBC">GBC</button>
+        <button class="chip" type="button" data-platform="FC">FC</button>
+        <button class="chip" type="button" data-platform="SFC">SFC</button>
+        <button class="chip" type="button" data-platform="MD">MD</button>
+      </div>
+      <input class="rom-search" id="romSearch" type="search" placeholder="搜索游戏名或文件名" data-i18n-placeholder="web.roms.searchPlaceholder" autocomplete="off">
+      <button class="btn primary" type="button" id="addGame" title="选择机种并上传一个 ROM" data-i18n-title="web.roms.addTitle" data-i18n="web.roms.add">添加游戏</button>
+      <button class="btn ghost" type="button" id="collectionImport" title="导入合集，或导入单个游戏包" data-i18n-title="web.roms.importTitle" data-i18n="web.roms.import">导入游戏/合集</button>
+      <button class="btn ghost" type="button" id="collectionExport" disabled title="先在平台上选中一个集合" data-i18n-title="web.roms.exportTitle" data-i18n="web.roms.export">导出合集</button>
+      <input id="collectionImportFile" type="file" accept=".zip,application/zip" hidden>
+    </div>
+    <div class="collection-status" id="collectionStatus" hidden>
+      <div class="collection-status-line">
+        <strong id="collectionStage">—</strong>
+        <span id="collectionCount"></span>
+        <span class="collection-actions">
+          <a class="btn ghost small" id="collectionDownload" hidden data-i18n="web.roms.download">下载合集</a>
+          <button class="btn ghost small" id="collectionCancel" type="button" data-i18n="web.common.cancel">取消</button>
+        </span>
+      </div>
+      <div class="bar"><div id="collectionBar"></div></div>
+      <p class="hint" id="collectionError"></p>
+    </div>
+    <div id="romList" class="rom-grid">
+      <div class="empty" data-i18n="web.roms.loading">正在读取游戏库…</div>
+    </div>
+  </section>
+
+  <!-- ============================ 存档 ============================ -->
+  <section class="page" data-page="saves" hidden>
+    <div class="toolbar">
+      <button class="btn" type="button" id="refreshSaves" data-i18n="web.saves.refresh">刷新存档</button>
+      <span class="muted small" id="savesSummary" data-i18n="web.common.reading">正在读取…</span>
+    </div>
+    <div id="savesList" class="units">
+      <div class="empty" data-i18n="web.saves.loading">正在读取存档…</div>
+    </div>
+  </section>
+
+  <!-- ============================ 文件 ============================ -->
+  <section class="page" data-page="files" hidden>
+    <section class="card">
+      <h2><span data-i18n="web.files.title">文件浏览</span>
+        <span class="mods-toolbar">
+          <button class="btn ghost small" type="button" id="fileUp" data-i18n="web.files.up">上一级</button>
+          <button class="btn ghost small" type="button" id="fileRefresh" data-i18n="web.common.refresh">刷新</button>
+          <button class="btn ghost small" type="button" id="fileNewFolder" data-file-write data-i18n="web.files.mkdir">新建文件夹</button>
+          <button class="btn ghost small" type="button" id="fileUpload" data-file-write data-i18n="web.files.upload">上传文件</button>
+        </span>
+      </h2>
+      <p class="hint" data-i18n="web.files.hint">浏览存储卡上的游戏、存档、mod 与说明文件。点击文件夹进入；点击文件名预览图片/文本或下载。Config 目录包含凭据，不显示；System 目录只读。</p>
+      <div class="file-breadcrumb" id="fileBreadcrumb"></div>
+      <p class="muted small" id="fileSummary" data-i18n="web.common.reading">正在读取…</p>
+      <input id="fileUploadInput" type="file" multiple hidden>
+      <div class="file-list-wrap">
+        <table class="file-table">
+          <thead><tr><th data-i18n="web.common.name">名称</th><th data-i18n="web.common.size">大小</th><th data-i18n="web.common.modified">修改时间</th><th data-i18n="web.common.actions">操作</th></tr></thead>
+          <tbody id="fileList">
+            <tr><td colspan="4" class="empty" data-i18n="web.files.loading">正在读取目录…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint warn" id="fileNotice" hidden></p>
+    </section>
+
+    <dialog id="filePreviewDialog" class="modal file-preview-dialog">
+      <div class="dialog-head">
+        <div>
+          <h2 id="filePreviewTitle" data-i18n="web.files.preview">文件预览</h2>
+          <p class="hint mono small" id="filePreviewMeta">—</p>
+        </div>
+        <button class="btn ghost small" type="button" id="filePreviewClose" data-i18n="web.common.close">关闭</button>
+      </div>
+      <div class="file-preview-body">
+        <img id="filePreviewImage" alt="" hidden>
+        <pre id="filePreviewText" hidden></pre>
+      </div>
+      <div class="row-actions">
+        <a class="btn" id="filePreviewDownload" href="#" download data-i18n="web.files.download">下载文件</a>
+      </div>
+    </dialog>
+  </section>
+
+  <!-- =========================== 云同步 =========================== -->
+  <section class="page" data-page="sync" hidden>
+    <div class="grid cols-2">
+      <section class="card">
+        <h2><span data-i18n="web.sync.title">同步方式</span> <button class="btn ghost small" type="button" id="addStorage" data-i18n="web.sync.add">+ 添加 WebDAV</button></h2>
+        <p class="hint" data-i18n="web.sync.hint">同一时间只使用一个同步方式；选择后点「保存设置」生效。</p>
+        <div id="storageList" class="storage-list"><div class="empty" data-i18n="web.common.reading">正在读取…</div></div>
+        <p class="hint warn" id="storageWarning" hidden></p>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="web.sync.edit">编辑 WebDAV</h2>
+        <form id="webdavForm" autocomplete="off">
+          <div class="field">
+            <label for="wdName" data-i18n="web.common.name">名称</label>
+            <input id="wdName" type="text" spellcheck="false" placeholder="家里 NAS" data-i18n-placeholder="web.sync.urlExample">
+          </div>
+          <div class="field">
+            <label for="wdUrl" data-i18n="web.sync.url">服务器地址</label>
+            <input id="wdUrl" type="text" inputmode="url" spellcheck="false" placeholder="https://nas.example.com/dav">
+          </div>
+          <div class="field">
+            <label for="wdRemoteRoot" data-i18n="web.sync.remoteRoot">远程根目录</label>
+            <input id="wdRemoteRoot" type="text" spellcheck="false" placeholder="/linkSlot">
+          </div>
+          <div class="field">
+            <label for="wdUsername" data-i18n="web.sync.username">用户名</label>
+            <input id="wdUsername" type="text" spellcheck="false" placeholder="WebDAV 用户名" data-i18n-placeholder="web.sync.usernameTitle">
+          </div>
+          <div class="field">
+            <label for="wdPassword" data-i18n="web.sync.password">密码</label>
+            <input id="wdPassword" type="password" autocomplete="new-password" placeholder="留空 = 保留现有密码" data-i18n-placeholder="web.sync.passwordTitle">
+            <p class="hint" id="wdPasswordState"></p>
+          </div>
+          <div class="field">
+            <label for="wdCaCert" data-i18n="web.sync.ca">自签 CA 证书（可选）</label>
+            <input id="wdCaCert" type="text" spellcheck="false" placeholder="Config/linkSlot/ca.pem">
+          </div>
+          <div class="field">
+            <label class="check"><input id="wdInsecure" type="checkbox"><span data-i18n="web.sync.insecure">跳过 TLS 证书校验（仅调试用）</span></label>
+            <label class="check"><input id="wdKeepRemote" type="checkbox"><span data-i18n="web.sync.keepRemote">保留云端旧文件（keep_remote）</span></label>
+            <label class="check"><input id="wdClearPassword" type="checkbox"><span data-i18n="web.sync.clearPassword">清除已保存的密码</span></label>
+          </div>
+          <div class="row-actions">
+            <button class="btn primary" type="submit" id="saveWebdav" data-i18n="web.common.save">保存设置</button>
+            <button class="btn ok" type="button" id="testWebdav" data-i18n="web.sync.test">测试连接</button>
+            <button class="btn ghost" type="button" id="removeStorage" data-i18n="web.sync.delete">删除此项</button>
+          </div>
+          <p class="hint" data-i18n="web.sync.testHint">测试连接使用当前表单（无需先保存）；修改生效配置前仍建议保存后再同步。</p>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2><span data-i18n="web.sync.cache">同步缓存</span> <button class="btn ghost small" type="button" id="refreshSync" data-i18n="web.common.refresh">刷新</button></h2>
+        <div id="cacheList" class="cache-wrap"><div class="empty" data-i18n="web.common.reading">正在读取…</div></div>
+        <h3 data-i18n="web.sync.lastOutput">上次同步输出</h3>
+        <pre class="log" id="syncOutput">—</pre>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2 data-i18n="web.sync.serviceLog">服务日志（最后 200 行）</h2>
+      <div class="row-actions">
+        <label for="logLevel" class="muted small" data-i18n="web.sync.logLevel">日志级别</label>
+        <select id="logLevel">
+          <option value="error" data-i18n="web.sync.levelError">错误</option>
+          <option value="warn" data-i18n="web.sync.levelWarn">警告</option>
+          <option value="info" data-i18n="web.sync.levelInfo">信息</option>
+          <option value="debug" data-i18n="web.sync.levelDebug">调试（WiFi 详细）</option>
+        </select>
+        <button class="btn ghost small" type="button" id="saveLogLevel" data-i18n="web.sync.saveLevel">保存级别</button>
+      </div>
+      <p class="hint" data-i18n="web.sync.debugHint">调试级别会记录 WiFi 扫描、关联、DHCP 等细节，日志增长较快；排查完建议切回「信息」。</p>
+      <pre class="log tall" id="syncLog" data-i18n="web.common.noLog">暂无日志</pre>
+    </section>
+  </section>
+
+  <!-- ============================ mods ============================ -->
+  <section class="page" data-page="mods" hidden>
+    <div class="banner warn hidden" id="modsRuntimeBanner" role="status" data-i18n="web.mods.runtime_missing">
+      设备上的 linkSlot CLI 未报告 mods=1：同步时不会执行 mods，语法检查不可用；请升级设备端 linkSlot 以执行 mods。
+    </div>
+
+    <section class="card">
+      <h2><span data-i18n="web.mods.list_title">mods 列表</span>
+        <span class="mods-toolbar">
+          <button class="btn ghost small" type="button" id="refreshMods" data-i18n="web.common.refresh">刷新</button>
+          <button class="btn ghost small" type="button" id="modImport" title="导入完整 mod ZIP 包" data-i18n-title="web.mods.importTitle" data-i18n="web.mods.import">导入</button>
+          <button class="btn ghost small" type="button" id="modExport" title="导出全部 mod（含 web/README/config）为 ZIP 备份包" data-i18n-title="web.mods.exportTitle" data-i18n="web.mods.export">导出</button>
+        </span>
+      </h2>
+      <input id="modImportFile" type="file" accept=".zip,application/zip" hidden>
+      <p class="hint"><span data-i18n="web.mods.list_hint_prefix">mod 必须自带完整管理页面（</span><span class="mono">web/index.html</span><span data-i18n="web.mods.list_hint_tail">）。列表只显示名称、版本、作者和总开关；点击一行查看 README 并打开 mod 自己的管理页面，文件请到「文件」页浏览。mod 的 WebDAV 访问范围是它自己选择的同步方式的远程根目录。</span></p>
+      <p class="muted small" id="modsSummary" data-i18n="web.common.reading">正在读取…</p>
+      <div class="cache-wrap">
+        <table class="mods-table">
+          <thead>
+            <tr><th data-i18n="web.mods.col_name">mod 名称</th><th data-i18n="web.mods.col_author">作者</th><th data-i18n="web.mods.col_enabled">是否启用</th></tr>
+          </thead>
+          <tbody id="modList">
+            <tr><td colspan="3" class="empty" data-i18n="web.mods.loading">正在读取 mod…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid cols-2">
+      <section class="card" id="modsInternalApiCard">
+        <h2>linkSlot mods 管理 API（内部）</h2>
+        <p class="hint">以下是 linkSlot 自己的管理页使用的 <span class="mono">/api/mods/**</span> 接口，普通 mod 作者不需要直接调用；mod 自带页面请使用上方文档中的 <span class="mono">LinkSlotMod.request</span> bridge。</p>
+        <ul class="api-list">
+          <li><span class="mono">GET /api/mods</span><span>mod 列表：版本、作者、动作数、启用状态、<span class="mono">category</span> 分类、是否有管理页面、运行支持标记</span></li>
+          <li><span class="mono">GET /api/mods/item?id=</span><span>mod 详情、版本与动作摘要</span></li>
+          <li><span class="mono">GET /api/mods/files?id=</span><span>当前 mod 的只读目录树</span></li>
+          <li><span class="mono">GET/POST /api/mods/file</span><span>mod bridge 的文本文件读取/保存</span></li>
+          <li><span class="mono">GET /mod-ui/&lt;id&gt;/web/*</span><span>sandbox 中的 mod 自带管理页面</span></li>
+          <li><span class="mono">POST /api/mods/item</span><span>新建 / 保存 mod 名称、版本与总开关</span></li>
+          <li><span class="mono">POST /api/mods/toggle</span><span>启用 / 停用 mod</span></li>
+          <li><span class="mono">POST /api/mods/delete</span><span>移动到 mods/.trash/</span></li>
+          <li><span class="mono">POST /api/mods/uninstall</span><span>永久卸载 mod 及其全部动作</span></li>
+          <li><span class="mono">GET /api/mods/action?id=&amp;action=</span><span>动作源码与 revision</span></li>
+          <li><span class="mono">POST /api/mods/action</span><span>新建 / 保存动作</span></li>
+          <li><span class="mono">POST /api/mods/action/toggle</span><span>启用 / 停用动作</span></li>
+          <li><span class="mono">POST /api/mods/action/delete</span><span>删除动作到 mod 回收站</span></li>
+          <li><span class="mono">POST /api/mods/test</span><span>linkSlot mods test --profile</span></li>
+          <li><span class="mono">POST /api/mods/check</span><span>linkSlot mods check --id [--action]</span></li>
+          <li><span class="mono">POST /api/files/upload?path=</span><span>原始字节上传；导入 mod 的图片、字体、主题文件走这里</span></li>
+          <li><span class="mono">POST /api/files/mkdir</span><span>创建目录；导入 mod 前先建 <span class="mono">web/</span> 等子目录</span></li>
+          <li><span class="mono">GET /api/status</span><span>设备是否可写、当前阶段等基础状态</span></li>
+        </ul>
+        <p class="hint">所有写接口都需要页面发送的 <span class="mono">X-Slot-Web: 1</span> 请求头；设备游戏中或同步中时写入返回 409。内置动作编辑器已移除，动作由 mod 自带管理页面通过受限 bridge 管理。</p>
+      </section>
+      <section class="card">
+        <h2><span data-i18n="web.overview.recentLog">最近日志</span> <button class="btn ghost small" type="button" id="refreshModsLog" data-i18n="web.common.refresh">刷新</button></h2>
+        <pre class="log" id="modsLog" data-i18n="web.common.noLog">暂无日志</pre>
+      </section>
+    </div>
+
+    <section class="card docs-card" id="modsApiCard">
+      <div class="docs-head">
+        <h2><span data-i18n="web.mods.docs">mod 开发文档</span> <span class="pill">API v1</span></h2>
+        <div class="doc-actions">
+          <button class="btn ghost small" type="button" data-copy="mod-ai-prompt" title="把整段提示词和你的想法一起发给 AI" data-i18n-title="web.mods.copyPromptTitle">复制 AI 提示词</button>
+          <button class="btn ghost small" type="button" data-copy="mod-api-quick" title="复制 Lua API 速查" data-i18n-title="web.mods.copyApiTitle">复制 API 速查</button>
+        </div>
+      </div>
+      <p class="hint">面向社区 mod 作者。当前 linkSlot <span class="mono">v0.6.73</span> / mods API <span class="mono">v1</span>。本页离线可用；完整细节见仓库 <span class="mono">workdoc/lua-mod-api-v1.md</span>。</p>
+
+      <nav class="docs-toc" aria-label="mod 文档目录" data-i18n-aria="web.mods.docTocTitle">
+        <a href="#doc-ai">AI 提示词</a>
+        <a href="#doc-layout">目录与清单</a>
+        <a href="#doc-lua">Lua API</a>
+        <a href="#doc-web">Web 管理页</a>
+        <a href="#doc-theme">主题包</a>
+        <a href="#doc-example">示例</a>
+        <a href="#doc-limits">限制与排障</a>
+      </nav>
+
+      <details class="doc-section" id="doc-ai" open>
+        <summary>AI 开发提示词（复制给任意 AI）</summary>
+        <p class="hint">先复制下面整段，再补一句你的需求，例如“做一个按游戏备份电池存档到 NAS 的 manual mod”。AI 应按提示词输出完整文件，而不是只给片段。</p>
+        <pre id="mod-ai-prompt">你是 linkSlot（Anbernic H700 掌机）的 Lua mod 开发者。请为 linkSlot v0.0.32 / mods API v1 编写一个可直接安装的 mod。
+只使用本提示词列出的 API，不要假设存在 os、io、require、package、debug、任意 socket 或系统命令，也不要访问 Config/、主同步区或其它 mod 的文件。
+
+【输出要求】
+1. 先输出完整文件树，然后逐个文件给出完整内容，不要只给 diff 或片段。
+2. 必须包含：mod.json、actions/&lt;action-id&gt;/action.json、actions/&lt;action-id&gt;/main.lua、web/index.html、web/app.js、README.md；可选 config.json、web/style.css。
+3. 代码使用 Lua 5.4 语法；Web 页面只使用原生 HTML/CSS/JS，不加载 CDN、外部字体或第三方脚本。
+4. 如果需求缺少关键信息（服务地址、API 格式、同步方向、冲突策略），先列出问题再等待，不要编造。
+5. 文件路径中的 &lt;id&gt; 只能使用小写字母、数字、_、-；mod id 与 action id 分开。
+
+【目录结构】
+mods/&lt;mod-id&gt;/
+  mod.json
+  config.json                  # 可选，linkSlot 不解释，mod 自己读写
+  README.md
+  actions/&lt;action-id&gt;/
+    action.json
+    main.lua
+  web/
+    index.html                 # 必需；社区用户从 Web 打开管理页
+    app.js
+    style.css
+
+【mod.json（schema 2）】
+{"schema":2,"name":"显示名称","version":"1.0.0","author":"你的名字","enabled":false}
+enabled 是总开关，建议发布时 false，由用户在设备/Web 启用。
+
+【action.json（schema 1）】
+{"schema":1,"name":"动作名称","timing":"manual","enabled":true,"order":100,"boot_delay_minutes":0}
+timing 只能是：
+before_upload / after_upload / before_download / after_download / after_sync / after_boot / manual
+after_boot 在设备启动后执行；boot_delay_minutes 是 0..=1440 的整数（分钟），只对 after_boot 有意义。同一系统启动内只执行一次；没有 ctx.game，ctx.unit 为 "boot"；不要用 mods.report/mods.choose。
+manual 不参与云同步：存在启用的 manual 动作时，卡带界面长按 Y 执行 linkSlot mods run。
+manual 动作可选 ui 复用云同步动画语法：
+"ui":{"animation":"cloud_sync","title":"同步电池存档","units":["sav"],"show_cloud":true,"direction":"upload"}
+animation 目前只支持 cloud_sync；units 只支持 state/sav，空数组显示通用网络数据流；direction 可选 upload/download；没有 ui 的 manual 动作仍显示简洁暗幕和阶段文字。
+order 为整数，越小越先执行。
+
+【Lua 可用 API】
+ctx.api = 1
+ctx.timing / ctx.unit（state|sav|boot）/ ctx.unit_path
+ctx.game = {name, platform, core, rom_sha256, state_dir, sav_path, srm_path}；after_sync / after_boot 时 ctx.game 为 nil
+ctx.mod = {id, dir, config, config_error}
+ctx.action = {id, name, dir}
+ctx.choices = 已确定的 mods.choose 答案
+ctx.webdav = {active, profiles={{id,name,remote_root}, ...}}
+ctx.transfer = 仅 after_upload/after_download：{direction,result,version}
+
+files.read(rel) -> string|nil；files.write(rel,data) -> true；files.list(rel) -> 数组；files.stat(rel) -> table|nil；files.exists(rel) -> boolean；files.mkdir(rel) -> true
+只能访问 States/、Saves/ 和当前 mods/&lt;mod-id&gt;/；States 只允许 .state/.png，Saves 只允许 .sav/.srm；写入是原子的。
+
+webdav.get([profile,] path) -> string|nil；webdav.put([profile,] path,data)；webdav.put_atomic([profile,] path,data)；webdav.list([profile,] path) -> 数组|nil；webdav.stat([profile,] path) -> table|nil；webdav.mkdir([profile,] path)
+profile 省略时使用 ctx.webdav.active；只能访问该同步方式的 remote_root。
+
+http.get(segments[,query]) -> {status,body}；http.post(segments,body,content_type[,query])；http.request(method,segments,opts)
+只能访问当前 mod config.json 的 base_url 来源；method 仅 GET/POST/PUT；不跟随重定向；404 不返回 nil，必须判断 status。
+http.request 的 opts 支持 body / content_type / query / headers；headers 是字符串表，例如 {["Authorization"]="Bearer ..."}。Host、Content-Length、Connection、Transfer-Encoding 不允许覆盖。
+
+library.exists("intro"|"guide") -> bool；library.write("intro"|"guide", text) -> true
+仅 manual 动作可用；只写当前游戏的 Labels/&lt;平台&gt;/&lt;游戏&gt;.txt 和 Guides/&lt;平台&gt;/&lt;游戏&gt;.txt，不能写别的路径。
+
+json.encode(v) / json.decode(text)
+hash.sha256(data) / hash.sha256_file(rel)
+zip.list(data) / zip.read(data,index_or_name) / zip.build({{name=,data=},...})
+log.info/warn/error/debug；print(...) 写入日志
+
+mods.report{status="ok"|"noop"|"error", direction="upload"|"download", error="net"|"config"|"server"|"fs"|"verify"|"timeout", detail="单行中文"}
+mods.choose{key,title,body,options={{id,label},...},default} -> 已选 id
+ui.confirm{title,body,yes,no} -> boolean（manual；B=否）
+ui.message{title,body,button} -> true（manual；单按钮文字弹窗）
+mods.progress{value=0..1,label} 或 {current,total,label}：manual 动画进度条；不上报则扫光
+两者复用 choice 检查点：首次中止并弹窗，恢复后返回结果；不要用 pcall 包住。
+mods.choose 只用于 manual；首次运行会中止并请求设备弹窗，恢复后返回选择。不要在它之前写文件，不要用 pcall 包住它。
+
+【mod 自带 Web 管理页】
+web/index.html 必须引用 /mod-ui/sdk.js，然后使用：
+window.LinkSlotMod.ready.then(info => ...)
+LinkSlotMod.request("files.read", {path:"config.json"})
+可用 bridge：
+files.list {} / files.read {path} / files.write {path,content,revision?}
+actions.list {} / actions.get {action} / actions.save {action_id?,name,timing,enabled,order,boot_delay_minutes?,content,revision?} / actions.toggle {action,enabled} / actions.delete {action} / actions.check {action?}
+context.saves {} / context.storages {}
+bridge 只能访问当前 mod；页面不能直接访问 /api/** 或任意网络。config.json 由 mod 页面通过 files.write 保存。
+
+【限制】
+单脚本 15 秒（manual 90 秒）、Lua 内存 32 MiB、manual 长按 Y 只执行一个动作；日志 200 行；本地读 64 MiB / 写 32 MiB；远程普通时机 16 请求/64 MiB，after_sync 64/128 MiB；http 16/64 MiB；zip 输入 16 MiB、单条解压 32 MiB、总量 64 MiB；网络超时普通 min(sync.timeout_secs,10) 秒，manual 最高 60 秒。
+
+请先确认需求，再按上述结构输出完整实现。</pre>
+      </details>
+
+      <details class="doc-section" id="doc-layout">
+        <summary>1. 目录结构与清单</summary>
+        <pre>mods/&lt;mod-id&gt;/
+├─ mod.json                 # schema 2，名称/版本/作者/总开关
+├─ config.json              # 可选，由 mod 自己解释
+├─ README.md
+├─ actions/&lt;action-id&gt;/
+│  ├─ action.json            # schema 1，timing/order/动作开关/开机延迟
+│  └─ main.lua               # Lua 5.4，单文件上限 256 KiB
+└─ web/
+   ├─ index.html             # 必需
+   ├─ app.js
+   └─ style.css</pre>
+        <div class="table-wrap">
+          <table class="api-table">
+            <thead><tr><th data-i18n="web.nav.files">文件</th><th>作用</th></tr></thead>
+            <tbody>
+              <tr><td><span class="mono">mod.json</span></td><td>mod 身份、版本、作者、总开关。发布时建议 <span class="mono">enabled:false</span>。</td></tr>
+              <tr><td><span class="mono">actions/*/action.json</span></td><td>动作名称、timing、启用状态、排序、after_boot 延迟；<span class="mono">order</span> 越小越先执行。</td></tr>
+              <tr><td><span class="mono">actions/*/main.lua</span></td><td>实际逻辑；每个动作独立沙箱执行。</td></tr>
+              <tr><td><span class="mono">web/index.html</span></td><td>社区用户打开 mod 管理页的入口；缺少它无法导入。</td></tr>
+              <tr><td><span class="mono">config.json</span></td><td>普通文本，linkSlot 不解释；建议由 mod 页面写入。</td></tr>
+              <tr><td><span class="mono">category</span></td><td>可选，Web 列表分组：<span class="mono">sync</span> / <span class="mono">info</span> / <span class="mono">tool</span> / <span class="mono">theme</span>。不写则按能力推断。</td></tr>
+              <tr><td><span class="mono">theme.txt</span></td><td>可选，主题包配色表，键名与 <span class="mono">Config/theme.txt</span> 相同。</td></tr>
+              <tr><td><span class="mono">wallpaper.png</span></td><td>可选，主题包壁纸，替代 <span class="mono">Wallpapers/</span> 的随机壁纸。</td></tr>
+              <tr><td><span class="mono">font.otf / font.ttf / font.ttc</span></td><td>可选，主题包界面字体，需含中文；解析失败自动回退内置字体。</td></tr>
+              <tr><td><span class="mono">slot_back_gba/gb/gbc/fc.png</span></td><td>可选，卡槽铭牌；按 <span class="mono">order</span> 取第一个提供的已启用 mod。</td></tr>
+              <tr><td><span class="mono">sync-chip.png</span></td><td>可选，联网芯片封面，底座与引脚仍由系统绘制。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">发布包：<span class="mono">mods/&lt;mod-id&gt;/</span> 为根，解压到存储卡根目录。Web 导入也接受包含 <span class="mono">manifest.json</span> + 上述目录的 ZIP。</p>
+        <pre>// mod.json（schema 2）
+{
+  "schema": 2,
+  "name": "显示名称",
+  "version": "1.0.0",
+  "author": "你的名字",
+  "enabled": false
+}
+
+// actions/sync/action.json（schema 1）
+{
+  "schema": 1,
+  "name": "同步",
+  "timing": "manual",
+  "enabled": true,
+  "order": 100,
+  "boot_delay_minutes": 0
+}</pre>
+      </details>
+
+      <details class="doc-section" id="doc-lua">
+        <summary>2. Lua 动作 API</summary>
+        <p class="hint">下面是最常用的完整速查；字段省略规则、错误分类和完整示例见 <span class="mono">workdoc/lua-mod-api-v1.md</span>。</p>
+        <pre id="mod-api-quick">-- 上下文（只读全局 ctx）
+ctx.api                 -- 1
+ctx.timing              -- before_upload / after_upload / before_download / after_download / after_sync / after_boot / manual
+ctx.unit                -- state / sav / boot；after_sync 为 nil；manual 为 sav；after_boot 为 boot
+ctx.unit_path           -- state=目录；sav=现有 .sav/.srm；after_sync / after_boot=nil
+ctx.game                -- {name, platform, core, rom_sha256, state_dir, sav_path, srm_path}；after_sync / after_boot 为 nil
+ctx.mod.id / ctx.mod.dir
+ctx.mod.config          -- 当前 mod config.json 解析结果（不存在为 nil）
+ctx.mod.config_error    -- config.json 读取/解析错误（无错误为 nil）
+ctx.action.id / ctx.action.name / ctx.action.dir
+ctx.choices             -- { key = option }，已确定的 mods.choose 答案
+ctx.webdav.active       -- 当前同步方式 id；没有兼容根时为 nil
+ctx.webdav.profiles     -- { id, name, remote_root } 数组
+ctx.transfer            -- after_upload/after_download：{ direction, result, version }
+
+-- 本地文件（相对卡根；只允许 States/、Saves/、当前 mods/&lt;id&gt;/）
+files.read(rel)         -- string 或 nil
+files.write(rel, data)  -- true；States 只允许 .state/.png，Saves 只允许 .sav/.srm
+files.list(rel)         -- { name, is_dir, size, mtime } 数组
+files.stat(rel)         -- { name, is_dir, size, mtime } 或 nil
+files.exists(rel)       -- boolean
+files.mkdir(rel)        -- true
+
+-- 当前游戏资料（仅 timing=manual；不影响 ROM/存档/数据库）
+library.exists("intro"|"guide")       -- boolean
+library.write("intro"|"guide", text)  -- true，写入 Labels/Guides 的约定路径
+
+-- 兼容根（省略 profile = ctx.webdav.active）
+webdav.get([profile,] path)         -- string 或 nil（404）
+webdav.put([profile,] path, data)
+webdav.put_atomic([profile,] path, data)
+webdav.list([profile,] path)        -- { name, is_dir, size, modified } 或 nil
+webdav.stat([profile,] path)        -- 条目或 nil
+webdav.mkdir([profile,] path)
+
+-- 受控 HTTP：只能访问本 mod config.json 的 base_url 来源
+http.get(segments [, query])                    -- { status, body }
+http.post(segments, body, content_type [, query])
+http.request(method, segments, opts)            -- GET/POST/PUT；opts: body/content_type/query/headers
+
+-- 手动动作结果（仅 timing=manual）
+mods.report{ status="ok"|"noop"|"error", direction="upload"|"download",
+             error="net"|"config"|"server"|"fs"|"verify"|"timeout",
+             detail="单行中文" }
+
+-- 通用选择弹窗（仅 timing=manual；A 确认 / B 取消）
+local choice = mods.choose{
+  key="conflict", title="存档冲突" data-i18n-title="web.sync.conflictTitle", body="本地和 GBAStation 都改过",
+  default="remote",
+  options={
+    { id="remote", label="用 GBAStation 覆盖本地" },
+    { id="local",  label="用本地覆盖 GBAStation" },
+  },
+}
+
+-- 辅助
+json.encode(v) / json.decode(text)
+hash.sha256(data) / hash.sha256_file(rel)
+zip.list(data) / zip.read(data, index_or_name) / zip.build({ {name=, data=}, ... })
+log.info / log.warn / log.error / log.debug
+print(...)              -- 写入日志，不写 stdout</pre>
+      </details>
+
+      <details class="doc-section" id="doc-web">
+        <summary>3. mod 自带 Web 管理页（bridge）</summary>
+        <p class="hint">页面在 sandbox iframe 中运行，不能直接访问 <span class="mono">/api/**</span>；先加载 SDK，再通过受限 bridge 操作当前 mod。</p>
+        <pre>// web/index.html
+&lt;script src="/mod-ui/sdk.js"&gt;&lt;/script&gt;
+&lt;script src="app.js"&gt;&lt;/script&gt;
+
+// web/app.js
+LinkSlotMod.ready.then(function (info) {
+  // info = { id, name, version }
+  return LinkSlotMod.request("files.read", { path: "config.json" });
+}).then(function (file) {
+  // file = { path, content, revision, editable, size }
+});
+
+LinkSlotMod.request("actions.list") // { actions: [...] }
+LinkSlotMod.request("actions.save", {
+  action_id: "sync", name: "同步", timing: "manual",
+  enabled: true, order: 100, boot_delay_minutes: 0, content: luaSource
+});</pre>
+        <div class="table-wrap">
+          <table class="api-table">
+            <thead><tr><th>bridge 方法</th><th>参数</th><th>返回 / 说明</th></tr></thead>
+            <tbody>
+              <tr><td><span class="mono">files.list</span></td><td><span class="mono">{}</span></td><td>当前 mod 的只读文件树。</td></tr>
+              <tr><td><span class="mono">files.read</span></td><td><span class="mono">{path}</span></td><td><span class="mono">{path, content, revision, editable, size}</span></td></tr>
+              <tr><td><span class="mono">files.write</span></td><td><span class="mono">{path, content, revision?}</span></td><td>原子写；revision 用于避免覆盖其它页面修改。</td></tr>
+              <tr><td><span class="mono">actions.list</span></td><td><span class="mono">{}</span></td><td><span class="mono">{ actions: [...] }</span></td></tr>
+              <tr><td><span class="mono">actions.get</span></td><td><span class="mono">{action}</span></td><td>动作详情与 Lua 源码。</td></tr>
+              <tr><td><span class="mono">actions.save</span></td><td><span class="mono">{action_id?,name,timing,enabled,order,boot_delay_minutes?,content,revision?}</span></td><td>新建或保存动作；不传 action_id 表示新建。after_boot 时 boot_delay_minutes 为 0..=1440。</td></tr>
+              <tr><td><span class="mono">actions.toggle</span></td><td><span class="mono">{action, enabled}</span></td><td>启用/停用单个动作。</td></tr>
+              <tr><td><span class="mono">actions.delete</span></td><td><span class="mono">{action}</span></td><td>移动到 mod 回收站。</td></tr>
+              <tr><td><span class="mono">actions.check</span></td><td><span class="mono">{action?}</span></td><td>调用 linkSlot CLI 做 Lua 语法检查。</td></tr>
+              <tr><td><span class="mono">context.saves</span></td><td><span class="mono">{}</span></td><td>当前存档/游戏列表，只读。</td></tr>
+              <tr><td><span class="mono">context.storages</span></td><td><span class="mono">{}</span></td><td><span class="mono">{ storages, timings }</span>，只读。</td></tr>
+              <tr><td><span class="mono">tianma.start</span></td><td><span class="mono">{path, overwrite?}</span></td><td>启动天马G 信息导入（主程序后台任务，只写 Labels/GBA）。</td></tr>
+              <tr><td><span class="mono">tianma.status</span></td><td><span class="mono">{}</span></td><td>导入进度、匹配/导入/跳过数量和错误。</td></tr>
+              <tr><td><span class="mono">tianma.cancel</span></td><td><span class="mono">{}</span></td><td>请求取消当前导入任务。</td></tr>
+              <tr><td><span class="mono">gbastation.games</span></td><td><span class="mono">{base_url}</span></td><td>读取 GBAStation 游戏列表，不下载 ROM；仅 gbastation-rom-sync 可调用。</td></tr>
+              <tr><td><span class="mono">gbastation.start</span></td><td><span class="mono">{base_url, keys, overwrite?}</span></td><td>下载选中 ROM 到 Games/&lt;平台&gt;/。</td></tr>
+              <tr><td><span class="mono">gbastation.status</span></td><td><span class="mono">{}</span></td><td>导入进度、数量、当前游戏和错误。</td></tr>
+              <tr><td><span class="mono">gbastation.cancel</span></td><td><span class="mono">{}</span></td><td>请求取消 GBAStation ROM 导入。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">所有 bridge 调用只作用于当前 mod；页面无法读取其它 mod 或直接发网络请求。天马导入的 <span class="mono">tianma.*</span> 是主程序提供的受控例外，只读写 <span class="mono">Imports/</span> 和 <span class="mono">Labels/GBA/</span>。GBAStation 的 <span class="mono">gbastation.*</span> 也只允许 <span class="mono">gbastation-rom-sync</span> 调用，并且只写对应的 <span class="mono">Games/</span> 目录。</p>
+      </details>
+
+      <details class="doc-section" id="doc-example">
+        <summary>4. 示例：manual + HTTP / 冲突选择</summary>
+        <pre>-- actions/sync/main.lua（manual）
+local base = ctx.mod.config and ctx.mod.config.base_url
+if not base then
+  mods.report{ status="error", error="config", detail="请先在管理页填写服务地址" }
+  return
+end
+
+local response = http.get({"api", "saves"}, { game = ctx.game.name })
+if response.status ~= 200 then
+  mods.report{ status="error", error="server",
+               detail="服务返回 HTTP " .. tostring(response.status) }
+  return
+end
+
+local choice = mods.choose{
+  key = "conflict",
+  title = "存档冲突",
+  body = "本地和服务端都修改了「" .. ctx.game.name .. "」。",
+  default = "remote",
+  options = {
+    { id="remote", label="用服务端覆盖本地" },
+    { id="local",  label="用本地覆盖服务端" },
+  },
+}
+files.write(ctx.game.sav_path, response.body)
+mods.report{ status="ok", direction="download",
+             detail="已同步（" .. choice .. "）" }</pre>
+        <p class="hint">示例只展示 API 组合方式；实际 mod 应校验长度、哈希、备份和错误分类。GBAStation / SaveDeck 两个完整示例在仓库 <span class="mono">workdoc/examples/</span>。</p>
+      </details>
+
+            <details class="doc-section" id="doc-theme">
+        <summary>主题包（配色 / 壁纸 / 字体 / 铭牌 / 芯片封面）</summary>
+        <p class="hint">一个 mod 只要带下列任意一个文件，就会被当作主题包；全部在启动时读取，改动需要重启生效。关闭或卸载后重启即回到内置外观，不会改写 <span class="mono">Config/theme.txt</span>。</p>
+        <div class="table-wrap">
+          <table class="api-table">
+            <thead><tr><th data-i18n="web.nav.files">文件</th><th>作用</th><th data-i18n="web.settings.notesTitle">说明</th></tr></thead>
+            <tbody>
+              <tr><td><span class="mono">theme.txt</span></td><td>配色</td><td>键名与 <span class="mono">Config/theme.txt</span> 一致：<span class="mono">preset</span>、<span class="mono">housing</span>、<span class="mono">recess</span>、<span class="mono">opening</span>、<span class="mono">edge</span>、<span class="mono">bg</span>、<span class="mono">bg_top</span>、<span class="mono">surface</span>、<span class="mono">surface_border</span>、<span class="mono">selected</span>、<span class="mono">selected_border</span>、<span class="mono">ink</span>、<span class="mono">ink_selected</span>、<span class="mono">ink_dim</span>、<span class="mono">accent</span>、<span class="mono">accent_dim</span></td></tr>
+              <tr><td><span class="mono">wallpaper.png</span></td><td>壁纸</td><td>替代 <span class="mono">Wallpapers/</span> 的随机壁纸，按 720×480 铺满裁切</td></tr>
+              <tr><td><span class="mono">font.otf</span> / <span class="mono">font.ttf</span> / <span class="mono">font.ttc</span></td><td>字体</td><td>需含中文字形；解析失败会记录日志并回退内置字体</td></tr>
+              <tr><td><span class="mono">slot_back_gba/gb/gbc/fc.png</span></td><td>卡槽铭牌</td><td>缺省时用内置刻字铭牌；存储卡里的 <span class="mono">System/Carts/slot_back_*.png</span> 优先级更高</td></tr>
+              <tr><td><span class="mono">sync-chip.png</span></td><td>芯片封面</td><td>只填充封装内部，引脚、外框、Pin 1、状态灯仍由系统绘制</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">优先级：<b>主题 mod</b>（已启用、<span class="mono">order</span> 最小）→ <span class="mono">Config/theme.txt</span> → 内置预设。多个主题 mod 同时启用时，只有 <span class="mono">order</span> 最小的那个生效。</p>
+        <pre>// mods/&lt;id&gt;/theme.txt
+preset default
+bg      #121212
+surface #242424
+ink     #e6e6e6
+accent  #cfcfcf
+
+// mod.json 里声明分类，Web 列表归到「外观」
+{
+  "schema": 2,
+  "name": "我的主题",
+  "version": "1.0.0",
+  "category": "theme"
+}</pre>
+        <p class="hint">字体和铭牌属于第三方素材，请自行确认授权：字体建议 SIL OFL，机种字标请勿随包分发未获授权的商标素材。</p>
+      </details>
+
+<details class="doc-section" id="doc-limits">
+        <summary>5. 限制、安全与排障</summary>
+        <div class="table-wrap">
+          <table class="api-table">
+            <thead><tr><th>项目</th><th>限制 / 行为</th></tr></thead>
+            <tbody>
+              <tr><td>单脚本</td><td>15 秒（manual 90 秒）、32 MiB Lua 内存、200 行日志。</td></tr>
+              <tr><td>manual 动作</td><td>单脚本 90 秒；长按 Y 只执行优先级最高的一个动作，失败则整体失败。</td></tr>
+              <tr><td>本地文件</td><td>读 64 MiB / 写 32 MiB；只能 States/、Saves/、当前 mod 目录；manual 另有当前游戏的 library 资料写入。</td></tr>
+              <tr><td>WebDAV</td><td>普通时机 16 次/64 MiB；after_sync 64 次/128 MiB；超时取 sync.timeout_secs 与 10 秒的较小值。</td></tr>
+              <tr><td>HTTP</td><td>仅 base_url 来源；16 次/64 MiB；普通时机超时取 sync.timeout_secs 与 10 秒的较小值，manual 最高 60 秒；不跟随重定向；404 也要判断 status。</td></tr>
+              <tr><td>ZIP</td><td>输入 16 MiB、256 条、单条解压 32 MiB、总量 64 MiB。</td></tr>
+              <tr><td>安全边界</td><td>不能访问 Config/、主同步区、其它 mod、系统命令或任意 URL；只启用可信 mod。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">长按 Y 没有执行 manual：确认 mod 总开关、动作开关、timing=manual 均启用，并用 <span class="mono">linkSlot mods check --id &lt;id&gt; --action &lt;action&gt;</span> 检查语法。页面打不开：确认存在 <span class="mono">web/index.html</span> 且已安装到 <span class="mono">mods/&lt;id&gt;/</span>。</p>
+      </details>
+    </section>
+
+    <section class="card docs-card" id="modsApiCardEn" hidden>
+      <div class="docs-head">
+        <h2>Mod development docs <span class="pill">API v1</span></h2>
+        <div class="doc-actions">
+          <button class="btn ghost small" type="button" data-copy="mod-ai-prompt-en">Copy AI prompt</button>
+          <button class="btn ghost small" type="button" data-copy="mod-api-quick-en">Copy API reference</button>
+        </div>
+      </div>
+      <p class="hint">For community mod authors. linkSlot <span class="mono">v0.9.0</span> / mods API <span class="mono">v1</span>. This page works offline; full reference: <span class="mono">workdoc/lua-mod-api-v1.md</span>.</p>
+
+      <details open>
+        <summary>Mod package and lifecycle</summary>
+        <div class="docs-body">
+          <p>The default package path is <span class="mono">mods/&lt;id&gt;/</span>. The id comes from the folder name; <span class="mono">mod.json</span> is required.</p>
+          <pre>mods/my-mod/
+  mod.json              # required
+  config.json           # optional, owned by the mod
+  README.md             # optional description
+  actions/sync/main.lua # one Lua entry per action
+  web/index.html        # optional sandboxed mod UI
+  web/app.js            # optional assets for that UI</pre>
+          <p>Import through <b>Mods → Import mod ZIP</b>. A ZIP is expected to contain <span class="mono">mods/&lt;id&gt;/</span> or the mod folder itself. Keep the mod off while editing files; enable it again after a syntax check.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>mod.json</summary>
+        <div class="docs-body">
+          <pre>{
+  "schema": 2,
+  "name": "Example mod",
+  "version": "1.0.0",
+  "author": "you",
+  "enabled": false
+}</pre>
+          <p>Schema 2 is current. Actions are discovered from <span class="mono">actions/&lt;action_id&gt;/main.lua</span>; <span class="mono">timing</span> is one of <span class="mono">manual</span>, <span class="mono">before_upload</span>, <span class="mono">after_upload</span>, <span class="mono">before_download</span>, <span class="mono">after_download</span>, <span class="mono">after_sync</span> or <span class="mono">after_boot</span>.</p>
+          <p>Set <span class="mono">"web": true</span> when <span class="mono">web/index.html</span> exists. The page runs in a sandboxed iframe with an opaque origin and may only call the host bridge.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Lua script contract</summary>
+        <div class="docs-body">
+          <p>Each action is a plain Lua file evaluated in an isolated runtime. The host provides one global <span class="mono">ctx</span> and the modules below; no other globals are available.</p>
+          <pre>-- actions/sync/main.lua
+local base = ctx.mod.config and ctx.mod.config.base_url
+if not base then
+  mods.report{ level = "warn", message = "base_url is not configured" }
+  return
+end
+ctx.http.get(base .. "/index.json")
+ctx.files.write("cache/index.json", ctx.http.body())
+mods.report{ message = "sync finished" }</pre>
+          <p><span class="mono">ctx</span> exposes <span class="mono">ctx.mod</span> (id, name, version, enabled, config, data dir), <span class="mono">ctx.timing</span>, <span class="mono">ctx.game</span> (when the host has a current game), <span class="mono">ctx.args</span> and <span class="mono">ctx.run</span>. <span class="mono">mods.report</span> writes a user-visible status line; <span class="mono">mods.fail</span> ends the action.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Runtime modules and limits</summary>
+        <div class="docs-body">
+          <table class="docs-table">
+            <thead><tr><th>Module</th><th>What it may do</th></tr></thead>
+            <tbody>
+              <tr><td><span class="mono">ctx.files</span></td><td>Read 64 MiB, write 32 MiB, only States/, Saves/ and this mod's data directory; manual timing may also write the current game's library metadata.</td></tr>
+              <tr><td><span class="mono">ctx.webdav</span></td><td>16 requests / 64 MiB normally; 64 requests / 128 MiB after sync; timeout is the smaller of sync.timeout_secs and 10 seconds.</td></tr>
+              <tr><td><span class="mono">ctx.http</span></td><td>Only the configured base_url origin; 16 requests / 64 MiB; manual timing may use up to 60 seconds; redirects are not followed; check the status even on 404.</td></tr>
+              <tr><td><span class="mono">ctx.zip</span></td><td>Input 16 MiB, 256 entries, 32 MiB per entry, 64 MiB total output.</td></tr>
+            </tbody>
+          </table>
+          <p>Mods cannot read Config/, the main sync area, other mods, run system commands or open arbitrary URLs. Only install mods you trust.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Web UI bridge</summary>
+        <div class="docs-body">
+          <p>A mod page is served from <span class="mono">/mod-ui/&lt;id&gt;/web/index.html</span> inside an iframe with <span class="mono">sandbox="allow-scripts"</span>. It never gets the page's cookies or direct <span class="mono">/api</span> access; it uses the injected SDK.</p>
+          <pre>&lt;script src="/mod-ui/sdk.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+LinkSlotMod.ready.then(function (info) {
+  // info.locale is "zh-CN" or "en-US"
+  return LinkSlotMod.request('files.read', { path: 'config.json' });
+}).then(function (file) {
+  console.log(file.content);
+});
+&lt;/script&gt;</pre>
+          <p>Requests: <span class="mono">files.read</span>, <span class="mono">files.write</span>, <span class="mono">files.list</span>, <span class="mono">files.remove</span>, <span class="mono">actions.read</span>, <span class="mono">actions.write</span>, <span class="mono">actions.delete</span>, <span class="mono">library.migrateSidecars</span>, and the read-only query methods listed under the management API. The host checks every request against the current mod id.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Management API reference</summary>
+        <div class="docs-body">
+          <ul class="api-list">
+            <li><span class="mono">GET /api/mods</span><span>List mods: version, author, action count, enabled state, category and UI support.</span></li>
+            <li><span class="mono">GET /api/mods/item?id=</span><span>Mod detail and action summary.</span></li>
+            <li><span class="mono">GET /api/mods/files?id=</span><span>Read-only tree for this mod.</span></li>
+            <li><span class="mono">GET/POST /api/mods/file</span><span>Read or save a text file through the bridge.</span></li>
+            <li><span class="mono">GET /mod-ui/&lt;id&gt;/web/*</span><span>Sandboxed mod UI assets.</span></li>
+            <li><span class="mono">POST /api/mods/item</span><span>Create or save name, version and master switch.</span></li>
+            <li><span class="mono">POST /api/mods/toggle</span><span>Enable or disable a mod.</span></li>
+            <li><span class="mono">POST /api/mods/delete</span><span>Move to mods/.trash/.</span></li>
+            <li><span class="mono">POST /api/mods/uninstall</span><span>Permanently remove the mod and its actions.</span></li>
+            <li><span class="mono">GET /api/mods/action?id=&amp;action=</span><span>Action source and revision.</span></li>
+            <li><span class="mono">POST /api/mods/action</span><span>Create or save an action.</span></li>
+            <li><span class="mono">POST /api/mods/action/toggle</span><span>Enable or disable an action.</span></li>
+            <li><span class="mono">POST /api/mods/test</span><span>linkSlot mods test --profile</span></li>
+            <li><span class="mono">POST /api/mods/check</span><span>linkSlot mods check --id [--action]</span></li>
+            <li><span class="mono">GET /api/status</span><span>Writability and current device state.</span></li>
+          </ul>
+          <p>Every write needs the page's <span class="mono">X-Slot-Web: 1</span> header; during a game or sync writes return 409.</p>
+        </div>
+      </details>
+
+      <p class="hint">Manual action does not run: check the mod switch, action switch and <span class="mono">timing=manual</span>, then run <span class="mono">linkSlot mods check --id &lt;id&gt; --action &lt;action&gt;</span>. The page does not open: confirm <span class="mono">web/index.html</span> exists under <span class="mono">mods/&lt;id&gt;/</span>.</p>
+      <pre id="mod-ai-prompt-en" class="hidden">You are writing a linkSlot mod for Anbernic H700 running Lua mods API v1. Only use the APIs documented in the bundled linkSlot mod docs. Never ask for terminal access, network access outside the configured base_url, or access to Config/, other mods or arbitrary paths. Return a complete mods/&lt;id&gt;/ tree with mod.json (schema 2), actions/&lt;id&gt;/main.lua, optional README.md, and optional web/index.html plus web/app.js using LinkSlotMod.request. Keep secrets in config.json and never commit them.</pre>
+      <pre id="mod-api-quick-en" class="hidden">linkSlot mods API v1 quick reference
+ctx.mod: id, name, version, enabled, config, dir
+ctx.timing: manual | before_upload | after_upload | before_download | after_download | after_sync | after_boot
+ctx.files: read(path), write(path, bytes), list(path), remove(path)
+ctx.webdav: get(path), put(path, bytes), list(path)
+ctx.http: get(url), post(url, body), body(), status()
+ctx.zip: read(path), entries()
+mods.report{ level = "info"|"warn"|"error", message = "..." }
+mods.fail(message)
+Files: max read 64 MiB, max write 32 MiB; only States/, Saves/ and the current mod directory.
+All writes require X-Slot-Web: 1; 409 while the device is in a game or sync.</pre>
+    </section>
+  </section>
+  <section class="page" data-page="network" hidden>
+    <div class="grid cols-2">
+      <section class="card">
+        <h2 data-i18n="web.network.current">当前网络</h2>
+        <div class="kv"><span data-i18n="web.network.status">状态</span><b id="netState">—</b></div>
+        <div class="kv"><span>SSID</span><b id="netSsid">—</b></div>
+        <div class="kv"><span>IPv4</span><b class="mono" id="netIp">—</b></div>
+        <div class="row-actions">
+          <button class="btn" type="button" id="scanBtn" data-i18n="web.network.scan">扫描附近 WiFi</button>
+        </div>
+        <p class="hint" id="scanHint" data-i18n="web.network.scanHint">扫描通常需要几秒，期间页面保持可用。</p>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="web.network.connectTitle">连接新 WiFi</h2>
+        <form id="wifiForm" autocomplete="off">
+          <div class="field">
+            <label for="ssidInput">SSID</label>
+            <input id="ssidInput" type="text" spellcheck="false" placeholder="WiFi 名称" data-i18n-placeholder="web.network.ssidTitle">
+          </div>
+          <div class="field">
+            <label for="pskInput" data-i18n="web.sync.password">密码</label>
+            <input id="pskInput" type="password" autocomplete="new-password" placeholder="开放网络留空" data-i18n-placeholder="web.network.passwordTitle">
+          </div>
+          <div class="banner info" data-i18n="web.network.switchHint">切换 WiFi 会短暂断开当前网络；如果设备 IP 变化，需要用新地址重新打开本页。</div>
+          <button class="btn primary" type="submit" id="connectBtn" data-i18n="web.network.connect">连接</button>
+        </form>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2 data-i18n="web.network.saved">已保存 WiFi</h2>
+      <div id="savedList" class="net-list"><div class="empty" data-i18n="web.network.savedEmpty">暂无已保存 WiFi；连接成功后会出现在这里。</div></div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="web.network.available">可用网络</h2>
+      <div id="netList" class="net-list"><div class="empty" data-i18n="web.network.availableEmpty">点击「扫描附近 WiFi」获取列表</div></div>
+    </section>
+  </section>
+
+  <!-- ============================ 设置 ============================ -->
+  <section class="page" data-page="settings" hidden>
+    <div class="grid cols-2">
+      <section class="card">
+        <h2 data-i18n="web.settings.languageTitle">语言</h2>
+        <div class="field">
+          <label for="webLanguage" data-i18n="web.settings.languageLabel">界面语言</label>
+          <select id="webLanguage">
+            <option value="zh-CN">中文</option>
+            <option value="en-US">English</option>
+          </select>
+          <p class="hint" data-i18n="web.settings.languageHint">
+            设备与网页共用同一份语言设置，切换后立即生效。
+          </p>
+        </div>
+        <p id="webLanguageStatus" class="hint" role="status"></p>
+      </section>
+      <section class="card">
+        <h2 data-i18n="web.settings.uploadTitle">上传限制</h2>
+        <form id="webSettingsForm">
+          <div class="field">
+            <label for="webUploadMb" data-i18n="web.settings.uploadLabel">单个上传文件上限（MB）</label>
+            <input id="webUploadMb" type="number" min="1" max="256" step="1" value="32">
+            <p class="hint" data-i18n="web.settings.uploadHint">
+              默认 32 MB，可设置 1–256 MB。适用于文件浏览、ROM、演示视频和版本包上传；保存后对新的请求生效。
+            </p>
+          </div>
+          <div class="actions">
+            <button class="btn primary" type="submit" id="saveWebSettings" data-i18n="web.common.save">保存设置</button>
+            <button class="btn" type="button" id="resetWebSettings" data-i18n="web.settings.uploadReset">恢复默认 32MB</button>
+          </div>
+          <p id="webSettingsStatus" class="hint" role="status" data-i18n="web.settings.loading">正在读取当前设置…</p>
+        </form>
+      </section>
+      <section class="card">
+        <h2 data-i18n="web.settings.notesTitle">说明</h2>
+        <p class="muted small" data-i18n="web.settings.notesBody">
+          上限只限制单个上传请求，不改变卡带库、存档或文件的存储位置。
+          传输大文件时请保持设备有足够内存和电量。
+        </p>
+      </section>
+    </div>
+  </section>
+
+  <!-- ============================ 关于 ============================ -->
+  <section class="page" data-page="about" hidden>
+    <div class="grid cols-2">
+      <section class="card">
+        <h2 data-i18n="web.about.version">版本</h2>
+        <div class="kv"><span>Slot</span><b id="aboutSlot">—</b></div>
+        <div class="kv"><span>linkSlot CLI</span><b id="aboutLinkSlot">—</b></div>
+        <div class="kv"><span data-i18n="web.about.webService">Web 服务</span><b id="aboutWeb">—</b></div>
+        <div class="kv"><span data-i18n="web.overview.address">访问地址</span><b class="mono small" id="aboutUrl">—</b></div>
+      </section>
+      <section class="card">
+        <h2 data-i18n="web.about.license">许可证</h2>
+        <p><span data-i18n="web.about.licensePrefix">Slot 与 linkSlot Web 管理页以</span> <b>GPL-3.0-or-later</b><span data-i18n="web.about.licenseTail">发布。</span></p>
+        <p class="muted small" data-i18n="web.about.embedded">本页面与静态资源全部内嵌在 slot 程序中，不加载任何外部字体、脚本或 CDN 资源。</p>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2 data-i18n="web.about.logExport">日志导出</h2>
+      <p class="hint"><span data-i18n="web.about.logHintPrefix">一键打包</span> <span class="mono">Logs/</span> <span data-i18n="web.about.logHintMid1">下的运行日志（含</span> <span class="mono">crash/</span> <span data-i18n="web.about.logHintMid2">崩溃记录）与版本信息，文件名带设备型号与本地时间，例如</span> <span class="mono">rg34xx_20261029223000_log.zip</span><span data-i18n="web.about.logHintTail">，便于发回分析。</span></p>
+      <div class="actions">
+        <button id="exportLogs" class="btn primary" type="button" data-i18n="web.about.logExportButton">一键导出日志</button>
+      </div>
+      <p id="exportLogsStatus" class="hint" role="status" data-i18n="web.about.logExportEmpty">尚未导出。</p>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="web.about.upgrade">系统升级</h2>
+      <p class="hint"><span data-i18n="web.about.upgradeHintPrefix">先在这里上传新的版本包；上传成功后，请在掌机上打开</span> <b data-i18n="web.about.upgradePath">系统设置 → 系统升级</b> <span data-i18n="web.about.upgradeHintTail">确认安装。升级会重启设备，但保留游戏、存档、配置和 mods。</span></p>
+      <div class="field">
+        <label for="upgradeFile" data-i18n="web.about.upgradeFile">版本包（linkslot-v*.zip）</label>
+        <input id="upgradeFile" type="file" accept=".zip,application/zip">
+      </div>
+      <div class="actions">
+        <button id="upgradeUpload" class="btn primary" type="button" data-i18n="web.about.upgradeUpload">上传版本包</button>
+      </div>
+      <div
+        id="upgradeProgress"
+        class="upload-progress hidden"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+        aria-label="上传进度" data-i18n-aria="web.common.progressTitle"
+      >
+        <div class="upload-progress-track">
+          <div class="upload-progress-bar" id="upgradeProgressBar"></div>
+        </div>
+        <p class="upload-progress-text" id="upgradeProgressText">0%</p>
+      </div>
+      <p id="upgradeStatus" class="hint" role="status" data-i18n="web.about.upgradeEmpty">尚未上传版本包。</p>
+      <p class="hint" data-i18n="web.about.upgradeTrust">
+        只上传可信来源的版本包。网页没有执行升级或重启的按钮；安装必须在掌机上确认。
+      </p>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="web.about.usage">使用说明</h2>
+      <ol class="about-steps">
+        <li data-i18n="web.about.usageWifi">设备与手机 / 电脑需要连接同一个 WiFi。</li>
+        <li data-i18n="web.about.usageSaves">「存档」页可以预览即时存档缩略图、下载存档、用上传文件覆盖即时存档 / 电池存档，或删除本机存档；删除不影响云同步或远端备份。</li>
+        <li><span data-i18n="web.about.usageSyncPrefix">「云同步」页配置 WebDAV 后，可对单个存档单元执行</span> <b>linkSlot sync</b><span data-i18n="web.about.usageSyncTail">；设备正在游戏或同步时写入会被拒绝。</span></li>
+        <li data-i18n="web.about.usageRoms">「游戏库」页可替换封面、ROM，也可给当前游戏上传介绍 `.txt` 和演示视频 `.mp4`；详情页可导出单个游戏，工具栏可按平台导出/导入包含 ROM、封面、介绍和视频的合集 ZIP。</li>
+        <li data-i18n="web.about.usageSecurity">本服务无登录鉴权，仅限家庭局域网使用，请勿暴露到公网。</li>
+        <li data-i18n="web.about.usageIp">设备 IP 变化（例如切换 WiFi）后，请用设备上显示的新地址重新访问。</li>
+      </ol>
+    </section>
+  </section>
+</main>
+
+<dialog id="romDialog" class="modal rom-dialog">
+  <div class="dialog-head">
+    <div>
+      <span class="pill" id="romDialogPlatform">—</span>
+      <h2 id="romDialogTitle" data-i18n="web.rom.detail">游戏详情</h2>
+    </div>
+    <button class="icon-btn" type="button" id="closeRomDialog" aria-label="关闭" data-i18n-aria="web.common.close">×</button>
+  </div>
+  <div class="rom-upload hidden" data-upload role="status" aria-live="polite">
+    <div class="rom-upload-line">
+      <strong data-upload-title data-i18n="web.common.uploading">正在上传…</strong>
+      <span class="rom-upload-file mono" data-upload-file></span>
+      <span class="rom-upload-percent mono" data-upload-text>0%</span>
+    </div>
+    <div class="upload-progress-track">
+      <div class="upload-progress-bar" data-upload-bar></div>
+    </div>
+  </div>
+  <div class="rom-detail">
+    <div class="rom-cover-pane">
+      <div class="rom-dialog-cover-wrap">
+        <img id="romDialogCover" class="rom-dialog-cover" alt="游戏封面" data-i18n-alt="web.rom.coverAlt" hidden>
+        <div id="romDialogNoCover" class="rom-cover-empty" data-i18n="web.rom.noCover">暂无封面</div>
+      </div>
+      <button class="btn primary" type="button" id="romReplaceCover" data-i18n="web.rom.replaceCover">替换封面</button>
+    </div>
+    <div class="rom-fields">
+      <div class="field">
+        <label for="romDialogPlatformText" data-i18n="web.rom.platform">平台</label>
+        <input id="romDialogPlatformText" type="text" readonly>
+      </div>
+      <div class="field">
+        <label for="romDialogFile" data-i18n="web.rom.romFile">ROM 文件</label>
+        <input id="romDialogFile" type="text" readonly>
+      </div>
+      <div class="field">
+        <label for="romDialogPath" data-i18n="web.rom.pathFixed">路径（不可修改）</label>
+        <input id="romDialogPath" class="mono" type="text" readonly>
+      </div>
+      <div class="field">
+        <label for="romDialogSize" data-i18n="web.common.size">大小</label>
+        <input id="romDialogSize" type="text" readonly>
+      </div>
+      <div class="field">
+        <label for="romCheatPath" data-i18n="web.rom.cheatFile">金手指文件</label>
+        <div class="rom-cheat-row">
+          <input id="romCheatPath" class="mono" type="text" maxlength="1024" placeholder="Cheats/GBA/mgba/游戏名.cht" data-i18n-placeholder="web.rom.cheatExample">
+          <button class="btn primary" type="button" id="romCheatSave" data-i18n="web.rom.savePath">保存路径</button>
+        </div>
+        <p class="hint" data-i18n="web.rom.cheatHint">相对存储卡根目录的 .cht 文件；留空恢复默认的 Cheats/平台/核心/游戏名.cht。</p>
+      </div>
+      <div class="field">
+        <label for="romColor" data-i18n="web.rom.colour">卡带颜色</label>
+        <div class="rom-color-row">
+          <input id="romColor" type="color" value="#8fd6c4" aria-label="卡带颜色" data-i18n-aria="web.rom.colour">
+          <input id="romColorHex" class="mono" type="text" maxlength="7" value="#8fd6c4" aria-label="卡带颜色十六进制" data-i18n-aria="web.rom.colourHex">
+          <button class="btn ghost" type="button" id="romColorRandom" data-i18n="web.rom.random">随机</button>
+          <button class="btn primary" type="button" id="romColorSave" data-i18n="web.rom.saveColour">保存颜色</button>
+        </div>
+        <p class="hint" data-i18n="web.rom.colourHint">修改后立即写入卡带配置；下次启动或重新扫描时生效。</p>
+      </div>
+      <div class="field" id="romFrontField">
+        <label data-i18n="web.rom.fronts">卡带前盖</label>
+        <div class="front-quick">
+          <div class="front-quick-preview">
+            <img id="frontQuickPreview" alt="">
+          </div>
+          <div class="front-quick-main">
+            <div class="front-quick-head">
+              <strong data-i18n="web.rom.quickFrontTitle">快速前盖</strong>
+              <span class="front-quick-count" id="frontQuickCount">0 / 5</span>
+              <span class="hint" data-i18n="web.rom.quickFrontHint">外壳保持不变，只替换封面贴纸。</span>
+            </div>
+            <div class="front-quick-actions">
+              <button class="btn primary" type="button" id="frontQuickCover" data-i18n="web.rom.quickFrontCover">用当前封面创建</button>
+              <button class="btn secondary" type="button" id="frontQuickBatch" data-i18n="web.rom.quickFrontBatch">批量添加封面</button>
+              <label class="front-quick-fit">
+                <span data-i18n="web.rom.quickFrontFit">封面适配</span>
+                <select id="frontQuickFit">
+                  <option value="contain" data-i18n="web.rom.quickFrontContain">完整显示</option>
+                  <option value="fill" data-i18n="web.rom.quickFrontFill">填满标签</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+        <input id="frontQuickFile" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+        <div class="front-list" id="frontList"></div>
+        <div class="rom-cheat-row">
+          <select id="frontModel" data-i18n-aria="web.rom.frontModel">
+            <option value="any" data-i18n="web.rom.frontModelAny">通用</option>
+            <option value="famicom" data-i18n="web.rom.frontModelFamicom">FC 卡带</option>
+            <option value="nes" data-i18n="web.rom.frontModelNes">NES 卡带</option>
+          </select>
+          <button class="btn secondary" type="button" id="frontNew" data-i18n="web.rom.frontNew">新建前盖</button>
+          <button class="btn secondary" type="button" id="frontImport" data-i18n="web.rom.frontImport">导入前盖</button>
+          <button class="btn primary" type="button" id="frontAdd" data-i18n="web.rom.frontAdd">上传前盖</button>
+        </div>
+        <p class="hint" data-i18n="web.rom.frontHint">最多 5 张；上传后会被裁成当前平台的固定前盖尺寸，空白处保持透明。</p>
+        <input id="frontFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        <input id="frontImportFile" type="file" accept=".json,application/json" hidden>
+      </div>
+      <div class="field" id="romModelField" hidden>
+        <label for="romModel" data-i18n="web.rom.model">卡带模型</label>
+        <div class="rom-cheat-row">
+          <select id="romModel">
+            <option value="famicom" data-i18n="web.rom.modelFamicom">FC 卡带（Famicom）</option>
+            <option value="nes" data-i18n="web.rom.modelNes">NES 卡带</option>
+          </select>
+          <button class="btn primary" type="button" id="romModelSave" data-i18n="web.rom.modelSave">保存模型</button>
+        </div>
+        <p class="hint" data-i18n="web.rom.modelHint">仅 FC 机种可切换；默认 FC 卡带。</p>
+      </div>
+      <div class="intro-assets">
+        <div class="intro-asset-row">
+          <div>
+            <strong data-i18n="web.rom.description">游戏介绍</strong>
+            <span id="romIntroState" class="intro-state" data-i18n="web.rom.noDescription">暂无介绍</span>
+          </div>
+          <button class="btn secondary" type="button" id="romIntroPick" data-i18n="web.rom.uploadTxt">上传 .txt</button>
+        </div>
+        <div class="rom-intro-body" id="romIntroBody" hidden></div>
+        <div class="intro-asset-row">
+          <div>
+            <strong data-i18n="web.rom.video">演示视频</strong>
+            <span id="romVideoState" class="intro-state" data-i18n="web.rom.noVideo">暂无视频</span>
+          </div>
+          <button class="btn secondary" type="button" id="romVideoPick" data-i18n="web.rom.uploadMp4">上传 .mp4</button>
+        </div>
+        <p class="hint" data-i18n="web.rom.mediaHint">上传后会自动命名为当前 ROM 的介绍文件；视频只接受 MP4。</p>
+      </div>
+      <div class="field">
+        <label for="romGuidePath" data-i18n="web.rom.guide">游戏攻略</label>
+        <div class="rom-cheat-row">
+          <input id="romGuidePath" class="mono" type="text" maxlength="1024" placeholder="Guides/GBA/游戏名.txt 或 .epub" data-i18n-placeholder="web.rom.guideExample">
+          <button class="btn primary" type="button" id="romGuideSave" data-i18n="web.rom.savePath">保存路径</button>
+        </div>
+        <div class="intro-asset-row">
+          <div>
+            <strong data-i18n="web.rom.guideTitle">TXT / EPUB 攻略</strong>
+            <span id="romGuideState" class="intro-state" data-i18n="web.rom.noGuide">暂无攻略</span>
+          </div>
+          <button class="btn secondary" type="button" id="romGuidePick" data-i18n="web.rom.uploadGuide">上传 .txt/.epub</button>
+        </div>
+        <p class="hint" data-i18n="web.rom.guideHint">相对存储卡根目录的 .txt 或 .epub 文件；留空恢复默认的 Guides/平台/游戏名.txt（没有 TXT 时自动读取 .epub）。</p>
+        <input id="romGuideInput" type="file" accept=".txt,.epub,text/plain,application/epub+zip" hidden>
+      </div>
+      <div class="rom-export-card">
+        <div class="rom-export-info">
+          <strong data-i18n="web.rom.export">导出游戏包</strong>
+          <span data-i18n="web.rom.exportHint">ROM、封面、介绍、视频、攻略、金手指和元数据（不含存档）</span>
+        </div>
+        <button class="btn primary" type="button" id="romExport" data-i18n="web.rom.export">导出游戏包</button>
+      </div>
+      <div class="rom-transfer-row">
+        <button class="btn primary" type="button" id="romPlayWeb" title="在浏览器里直接游玩（设备只提供文件）" data-i18n-title="web.rom.playTitle" data-i18n="web.rom.play">在浏览器游玩</button>
+        <button class="btn secondary" type="button" id="romReplaceRom" data-i18n="web.rom.replaceRom">替换 ROM</button>
+        <button class="btn secondary" type="button" id="romRename" data-i18n="web.rom.rename">重命名</button>
+        <button class="btn danger-solid" type="button" id="romDelete" data-i18n="web.rom.delete">删除 ROM</button>
+      </div>
+      <p class="hint" id="romPlayWebHint" data-i18n="web.rom.playHint">模拟器在浏览器里运行，电池存档自动读写；目前支持 GBA / GB / GBC / FC。</p>
+      <p class="hint" data-i18n="web.rom.exportTail">导出后使用右上角「导入游戏/合集」可恢复完整游戏包；替换 ROM 只改当前文件内容。</p>
+      <input id="romFileInput" type="file" hidden>
+      <input id="romIntroInput" type="file" accept=".txt,text/plain" hidden>
+      <input id="romVideoInput" type="file" accept=".mp4,video/mp4" hidden>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="addGameDialog" class="modal add-game-dialog" aria-labelledby="addGameTitle">
+  <div class="dialog-head">
+    <div>
+      <span class="pill" data-i18n="web.addGame.title">新游戏</span>
+      <h2 id="addGameTitle" data-i18n="web.roms.add">添加游戏</h2>
+    </div>
+    <button class="icon-btn" type="button" id="closeAddGame" aria-label="关闭" data-i18n-aria="web.common.close">×</button>
+  </div>
+  <div class="rom-upload hidden" data-upload role="status" aria-live="polite">
+    <div class="rom-upload-line">
+      <strong data-upload-title data-i18n="web.addGame.busy">正在添加游戏…</strong>
+      <span class="rom-upload-file mono" data-upload-file></span>
+      <span class="rom-upload-percent mono" data-upload-text>0%</span>
+    </div>
+    <div class="upload-progress-track">
+      <div class="upload-progress-bar" data-upload-bar></div>
+    </div>
+  </div>
+  <div class="field">
+    <label for="addGamePlatform" data-i18n="web.addGame.platform">机种</label>
+    <select id="addGamePlatform">
+      <option value="GBA">GBA · Game Boy Advance（.gba）</option>
+      <option value="GB">GB · Game Boy（.gb / .gbc）</option>
+      <option value="GBC">GBC · Game Boy Color（.gb / .gbc）</option>
+      <option value="FC">FC · Famicom / NES（.nes）</option>
+      <option value="SFC">SFC · Super Famicom / SNES（.sfc / .smc / .fig）</option>
+      <option value="MD">MD · Mega Drive / Genesis（.md / .gen / .smd / .bin）</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="addGameName" data-i18n="web.rom.romFile">ROM 文件</label>
+    <div class="rom-cheat-row">
+      <input id="addGameName" class="mono" type="text" readonly placeholder="尚未选择文件" data-i18n-placeholder="web.common.noFileChosen">
+      <button class="btn primary" type="button" id="addGamePick" data-i18n="web.addGame.chooseFile">选择文件</button>
+    </div>
+    <p class="hint" id="addGameHint" data-i18n="web.addGame.hint">选择文件后会保存到 Games/GBA/，并立即出现在游戏库里。</p>
+  </div>
+  <div class="row-actions">
+    <button class="btn ghost" type="button" id="addGameCancel" data-i18n="web.common.cancel">取消</button>
+    <button class="btn primary" type="button" id="addGameSubmit" disabled data-i18n="web.addGame.submit">上传并添加</button>
+  </div>
+  <input id="addGameFile" type="file" accept=".gba" hidden>
+</dialog>
+
+<dialog id="coverDialog" class="modal cover-dialog">
+  <div class="dialog-head">
+    <div>
+      <h2 data-i18n="web.cover.title">编辑封面</h2>
+      <p class="hint" id="coverTargetHint">—</p>
+    </div>
+    <button class="icon-btn" type="button" id="closeCoverDialog" aria-label="关闭" data-i18n-aria="web.common.close">×</button>
+  </div>
+  <div class="cover-editor">
+    <div class="cover-stage">
+      <canvas id="coverCanvas" width="532" height="276"></canvas>
+      <div class="cover-empty" id="coverEmpty" data-i18n="web.cover.pick">选择一张图片作为封面</div>
+    </div>
+    <div class="cover-tools">
+      <button class="btn" type="button" id="coverPick" data-i18n="web.cover.choose">选择图片</button>
+      <button class="btn ghost" type="button" id="coverReset" data-i18n="web.cover.reset">重置位置</button>
+      <button class="btn ghost" type="button" id="coverFit" title="整张图缩进封面框，不裁切" data-i18n-title="web.cover.fitTitle" data-i18n="web.cover.fit">整图显示</button>
+      <label class="cover-zoom" for="coverZoom">
+        <span data-i18n="web.cover.zoom">缩放</span>
+        <input id="coverZoom" type="range" min="0.2" max="3" step="0.01" value="1">
+        <b id="coverZoomText">100%</b>
+      </label>
+      <input id="coverFileInput" type="file" accept="image/*" hidden>
+    </div>
+  </div>
+  <div class="row-actions cover-actions">
+    <button class="btn ghost" type="button" id="coverCancel" data-i18n="web.common.cancel">取消</button>
+    <button class="btn primary" type="button" id="coverSave" data-i18n="web.cover.save">保存封面</button>
+  </div>
+  <p class="hint" data-i18n="web.cover.hint">拖动图片调整位置，滑块缩放；想要整张图不被裁切，点「整图显示」再保存。</p>
+</dialog>
+
+<dialog id="frontEditorDialog" class="modal front-editor-dialog">
+  <div class="dialog-head front-editor-head">
+    <div>
+      <h2 id="frontEditorTitle" data-i18n="web.frontEditor.title">前盖编辑器</h2>
+      <p class="hint" id="frontEditorMeta">—</p>
+    </div>
+    <div class="front-editor-head-actions">
+      <button class="btn secondary small" type="button" id="frontEditorFocus" aria-pressed="false" data-i18n="web.frontEditor.focus">全屏</button>
+      <button class="btn ghost small" type="button" id="frontUndo" data-i18n="web.frontEditor.undo">撤销</button>
+      <button class="btn ghost small" type="button" id="frontRedo" data-i18n="web.frontEditor.redo">重做</button>
+      <button class="icon-btn" type="button" id="frontEditorClose" aria-label="关闭" data-i18n-aria="web.common.close">×</button>
+    </div>
+  </div>
+  <div class="front-editor-body">
+    <aside class="front-sidebar front-layer-sidebar">
+      <div class="front-sidebar-title" data-i18n="web.frontEditor.layers">图层</div>
+      <div class="front-layer-list" id="frontLayerList"></div>
+      <div class="front-layer-add">
+        <button class="btn ghost small" type="button" id="frontAddImage" data-i18n="web.frontEditor.addImage">图片</button>
+        <button class="btn ghost small" type="button" id="frontAddCover" data-i18n="web.frontEditor.addCover">当前封面</button>
+        <button class="btn ghost small" type="button" id="frontAddShell" data-i18n="web.frontEditor.addShell">无封面外壳</button>
+        <button class="btn ghost small" type="button" id="frontAddText" data-i18n="web.frontEditor.addText">文字</button>
+        <button class="btn ghost small" type="button" id="frontAddRect" data-i18n="web.frontEditor.addRect">矩形</button>
+        <button class="btn ghost small" type="button" id="frontAddEllipse" data-i18n="web.frontEditor.addEllipse">圆形</button>
+        <button class="btn ghost small" type="button" id="frontAddLine" data-i18n="web.frontEditor.addLine">线条</button>
+      </div>
+      <div class="front-layer-add">
+        <button class="btn ghost small" type="button" id="frontTemplateTitle" data-i18n="web.frontEditor.templateTitle">标题模板</button>
+        <button class="btn ghost small" type="button" id="frontTemplateFrame" data-i18n="web.frontEditor.templateFrame">边框模板</button>
+      </div>
+      <label class="front-colour-row">
+        <span data-i18n="web.frontEditor.background">底色</span>
+        <input id="frontBackground" type="color" value="#202028">
+      </label>
+      <label class="front-check">
+        <input id="frontGradient" type="checkbox">
+        <span data-i18n="web.frontEditor.gradient">渐变背景</span>
+      </label>
+      <label class="front-colour-row">
+        <span data-i18n="web.frontEditor.gradientTo">渐变颜色</span>
+        <input id="frontBackground2" type="color" value="#08080c">
+      </label>
+      <label class="front-colour-row">
+        <span data-i18n="web.frontEditor.gradientAngle">渐变角度</span>
+        <input id="frontGradientAngle" type="number" min="0" max="360" step="1" value="90">
+      </label>
+    </aside>
+    <section class="front-stage">
+      <div class="front-canvas-wrap">
+        <div class="front-canvas-shell">
+          <canvas id="frontCanvas" width="360" height="299"></canvas>
+        </div>
+      </div>
+      <div class="front-stage-tools">
+        <label class="front-check"><input id="frontShowMask" type="checkbox" checked><span data-i18n="web.frontEditor.showMask">显示卡带底图</span></label>
+        <label class="front-check"><input id="frontShowGuides" type="checkbox"><span data-i18n="web.frontEditor.showGuides">标签辅助线</span></label>
+        <label class="front-zoom" for="frontZoom">
+          <span data-i18n="web.frontEditor.zoom">缩放</span>
+          <input id="frontZoom" type="range" min="0.4" max="5" step="0.01" value="1">
+          <b id="frontZoomText">100%</b>
+        </label>
+      </div>
+    </section>
+    <aside class="front-sidebar front-inspector">
+      <div class="front-sidebar-title" data-i18n="web.frontEditor.properties">属性</div>
+      <div id="frontInspector"></div>
+    </aside>
+  </div>
+  <div class="front-editor-foot">
+    <label class="front-name-row">
+      <span data-i18n="web.frontEditor.name">前盖名称</span>
+      <input id="frontNameInput" type="text" maxlength="80">
+    </label>
+    <div class="row-actions">
+      <button class="btn ghost" type="button" id="frontEditorCancel" data-i18n="web.common.cancel">取消</button>
+      <button class="btn primary" type="button" id="frontEditorSave" data-i18n="web.frontEditor.save">保存前盖</button>
+    </div>
+  </div>
+  <p class="hint" data-i18n="web.frontEditor.hint">在固定卡带轮廓内排版；透明区域会显示卡壳颜色，保存后会直接用于设备。</p>
+  <input id="frontImageInput" type="file" accept="image/*" hidden>
+</dialog>
+
+<dialog id="modDetailDialog" class="modal mod-dialog" aria-labelledby="modDetailTitle">
+  <div class="dialog-head">
+    <div>
+      <h2 id="modDetailTitle" data-i18n="web.mod.detail">mod 详情</h2>
+      <p class="hint"><span class="pill dim mono" id="modDetailId" data-i18n="web.mod.unsaved">未保存</span><span class="pill dim" id="modDetailVersion"></span><span class="pill dim" id="modDetailAuthor" data-i18n="web.mod.noAuthor">无作者信息</span></p>
+    </div>
+    <button class="icon-btn" type="button" id="closeModDetail" aria-label="关闭" data-i18n-aria="web.common.close">×</button>
+  </div>
+  <p class="hint" id="modDetailStatus" role="status">—</p>
+  <div class="row-actions">
+    <button class="btn primary" type="button" id="openModUi" data-i18n="web.mod.openPage">打开管理页面</button>
+    <button class="btn danger" type="button" id="uninstallMod" data-i18n="web.mod.uninstall">卸载 mod</button>
+  </div>
+  <div class="battery-block">
+    <h3 data-i18n="web.mod.readme">简介</h3>
+    <pre class="log mod-readme" id="modReadme" data-i18n="web.mod.readingReadme">正在读取 README…</pre>
+  </div>
+</dialog>
+
+<dialog id="modUiDialog" class="modal mod-ui-dialog" aria-labelledby="modUiTitle">
+  <div class="dialog-head">
+    <div>
+      <h2 id="modUiTitle" data-i18n="web.mod.page">mod 管理页面</h2>
+      <p class="hint" id="modUiHint" data-i18n="web.mod.pageHint">页面在沙箱中运行，只能通过受限 API 操作当前 mod。</p>
+    </div>
+    <button class="icon-btn" type="button" id="closeModUi" aria-label="关闭" data-i18n-aria="web.common.close">×</button>
+  </div>
+  <iframe id="modUiFrame" sandbox="allow-scripts allow-forms" referrerpolicy="no-referrer" title="mod 管理页面" data-i18n-title="web.mod.page"></iframe>
+  <p class="hint" id="modUiStatus" role="status">—</p>
+</dialog>
+
+<div class="upload-overlay hidden" id="uploadProgressOverlay" role="status" aria-live="polite">
+  <div class="upload-overlay-card card">
+    <h2 id="uploadProgressTitle" data-i18n="web.common.uploading">正在上传…</h2>
+    <p class="hint" id="uploadProgressFile" data-i18n="web.mod.keepOpen">请保持页面打开</p>
+    <div class="upload-progress" id="uploadProgressBox">
+      <div class="upload-progress-track">
+        <div class="upload-progress-bar" id="uploadProgressBar"></div>
+      </div>
+      <p class="upload-progress-text" id="uploadProgressText">0%</p>
+    </div>
+  </div>
+</div>
+<div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="uploadInput" hidden>
+<script src="/app.js"></script>
+</body>
+</html>

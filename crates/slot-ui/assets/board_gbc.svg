@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 273.6" width="240" height="273.6">
+  <defs>
+    <pattern id="fingers" width="5.875" height="17" patternUnits="userSpaceOnUse">
+      <rect x="1" width="3.8" height="17" rx=".5" fill="#d4a93c"/>
+    </pattern>
+    <pattern id="pins" width="3" height="3" patternUnits="userSpaceOnUse">
+      <rect x=".7" width="1.6" height="3" fill="#b3b3b8"/>
+    </pattern>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".24"/>
+      <stop offset=".25" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- GBC shell: round shoulders and a centre locating notch -->
+  <path fill="#fe01fe" d="M10 5 H101 L106 13 Q120 20 134 13 L139 5 H230 Q238 5 238 14 V244 L226 260 H14 L2 244 V14 Q2 5 10 5 Z"/>
+  <path fill="#fe02fe" d="M11 11 H101 L106 19 Q120 25 134 19 L139 11 H229 V246 L223 259 H17 L11 246 Z"/>
+  <path fill="#fe03fe" d="M17 17 H223 V245 L217 255 H23 L17 245 Z"/>
+  <rect x="17" y="17" width="206" height="228" fill="url(#shade)"/>
+
+  <!-- PCB, with the same top notch -->
+  <path fill="#2f7f31" d="M24 24 H98 L103 31 Q120 37 137 31 L142 24 H216 Q223 24 223 31 V236 H17 V31 Q17 24 24 24 Z"/>
+  <path fill="#3a9a3c" d="M25 27 H98 L103 34 Q120 40 137 34 L142 27 H215 V233 H25 Z"/>
+  <path fill="#2f7f31" d="M29 31 H211 V229 H29 Z"/>
+
+  <!-- shell clip notches -->
+  <rect x="1" y="74" width="9" height="24" rx="2" fill="#fe02fe" stroke="#4a5057" stroke-width=".4"/>
+  <rect x="230" y="74" width="9" height="24" rx="2" fill="#fe02fe" stroke="#4a5057" stroke-width=".4"/>
+
+  <!-- mounting holes -->
+  <g fill="#123b18" stroke="#7fc77a" stroke-width=".6">
+    <circle cx="33" cy="40" r="3.2"/><circle cx="207" cy="40" r="3.2"/>
+    <circle cx="33" cy="213" r="3.2"/><circle cx="207" cy="213" r="3.2"/>
+  </g>
+  <g fill="#050706">
+    <circle cx="33" cy="40" r="1.2"/><circle cx="207" cy="40" r="1.2"/>
+    <circle cx="33" cy="213" r="1.2"/><circle cx="207" cy="213" r="1.2"/>
+  </g>
+
+  <!-- fixed mGBA socket high on the board -->
+  <rect x="96" y="50" width="48" height="36" rx="5" fill="#1b4b20" stroke="#6cc463" stroke-width=".8"/>
+  <rect x="100" y="54" width="40" height="28" rx="3" fill="#143a18" stroke="#2f6f31" stroke-width=".5"/>
+  <rect x="101" y="50" width="38" height="3" fill="url(#pins)"/>
+  <rect x="101" y="83" width="38" height="3" fill="url(#pins)"/>
+
+  <!-- PWR: the GBC-only power block -->
+  <rect x="24" y="46" width="36" height="22" rx="1.5" fill="#1a1a1a" stroke="#3d3d3d" stroke-width=".4"/>
+  <rect x="28" y="42" width="28" height="2" fill="url(#pins)"/>
+  <rect x="28" y="68" width="28" height="2" fill="url(#pins)"/>
+  <rect x="29" y="53" width="26" height="8" rx=".5" fill="#242424" stroke="#494949" stroke-width=".3"/>
+
+
+  <!-- vias in the denser CGB bus -->
+  <g fill="#d4a93c">
+    <circle cx="90" cy="192" r="2.2"/><circle cx="104" cy="192" r="2.2"/>
+    <circle cx="118" cy="192" r="2.2"/><circle cx="132" cy="192" r="2.2"/>
+  </g>
+
+  <!-- capacitors -->
+  <g>
+    <circle cx="204" cy="84" r="7" fill="#5b5b5e" stroke="#b9b9bc" stroke-width=".5"/>
+    <circle cx="204" cy="84" r="4" fill="#29292b"/>
+    <circle cx="204" cy="106" r="7" fill="#5b5b5e" stroke="#b9b9bc" stroke-width=".5"/>
+    <circle cx="204" cy="106" r="4" fill="#29292b"/>
+    <circle cx="204" cy="128" r="7" fill="#5b5b5e" stroke="#b9b9bc" stroke-width=".5"/>
+    <circle cx="204" cy="128" r="4" fill="#29292b"/>
+    <rect x="201" y="112" width="6" height="10" fill="#444446"/>
+  </g>
+
+  <!-- central ROM/game-name recess -->
+  <rect x="84" y="100" width="76" height="80" rx="4" fill="#1a1a1a" stroke="#6cc463" stroke-width=".5"/>
+  <rect x="90" y="106" width="64" height="68" rx="2" fill="#202020"/>
+
+  <!-- test pads -->
+  <g fill="#d4a93c">
+    <circle cx="34" cy="98" r="2"/><circle cx="34" cy="116" r="2"/><circle cx="34" cy="134" r="2"/>
+  </g>
+
+  <!-- traces from connector to the fixed socket -->
+  <g fill="none" stroke="#6cc463" stroke-width=".45" stroke-linecap="round" opacity=".7">
+    <path d="M34 228 V202 H96 V86"/>
+    <path d="M42 228 V208 H104 V86"/>
+    <path d="M50 228 V214 H112 V86"/>
+    <path d="M58 228 V218 H120 V86"/>
+    <path d="M66 228 V216 H128 V86"/>
+    <path d="M74 228 V210 H136 V86"/>
+    <path d="M82 228 V204 H144 V86"/>
+    <path d="M90 228 V198 H208 V86"/>
+    <path d="M98 228 V192 H208 V106"/>
+    <path d="M106 228 V186 H208 V128"/>
+  </g>
+  <g fill="none" stroke="#6cc463" stroke-width=".45" opacity=".5">
+    <path d="M52 34 H88 V46"/>
+    <path d="M60 34 H96 V46"/>
+    <path d="M68 34 H104 V46"/>
+    <path d="M180 34 H150 V46"/>
+    <path d="M188 34 H158 V46"/>
+    <path d="M196 62 H214 V74"/>
+  </g>
+
+  <!-- 32 gold fingers -->
+  <rect x="26" y="234" width="188" height="17" fill="url(#fingers)"/>
+  <rect x="24" y="232" width="192" height="2" fill="#c9a13a" opacity=".7"/>
+  <rect x="24" y="251" width="192" height="1" fill="#9b7a27" opacity=".8"/>
+
+  <!-- bottom shell grip -->
+  <rect x="32" y="255" width="176" height="6" rx="2" fill="#fe02fe" stroke="#4a5057" stroke-width=".4"/>
+</svg>

@@ -1,0 +1,1 @@
+R7 extends the renamed Slot Simplified Chinese font subset with cheat labels. SIL OFL 1.1; see Noto-OFL.txt. Modified 2026-10-12.

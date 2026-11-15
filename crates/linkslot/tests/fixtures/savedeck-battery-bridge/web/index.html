@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SaveDeck 电池存档桥</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <h1>SaveDeck 电池存档桥</h1>
+      <p id="modInfo" class="muted">正在连接 linkSlot…</p>
+    </div>
+    <span class="badge">mod 管理页</span>
+  </header>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>动作</h2>
+      <button id="newAction" class="btn" type="button">+ 新建动作</button>
+    </div>
+    <p class="hint">动作由这个 mod 自己管理。当前推荐使用 manual 时机：启用 mod 后长按 Y 同步当前卡带，不再自动执行 after_sync。</p>
+    <div id="actionList" class="list"><div class="empty">正在读取动作…</div></div>
+    <form id="actionForm" class="editor" hidden>
+      <input id="actionId" type="hidden">
+      <input id="actionRevision" type="hidden">
+      <div class="grid">
+        <label>名称<input id="actionName" maxlength="64" required></label>
+        <label>顺序<input id="actionOrder" type="number" min="-9999" max="9999" value="100"></label>
+        <label>执行时机
+          <select id="actionTiming">
+            <option value="before_upload">上传前</option>
+            <option value="after_upload">上传后</option>
+            <option value="before_download">下载前</option>
+            <option value="after_download">下载后</option>
+            <option value="after_sync">同步完成后</option>
+            <option value="manual">手动（长按 Y）</option>
+          </select>
+        </label>
+        <label class="check"><input id="actionEnabled" type="checkbox"> 启用动作</label>
+      </div>
+      <label class="full">main.lua
+        <textarea id="actionContent" class="mono" rows="12" spellcheck="false"></textarea>
+      </label>
+      <div class="actions">
+        <button id="saveAction" class="btn primary" type="button">保存动作</button>
+        <button id="checkAction" class="btn" type="button">语法检查</button>
+        <button id="cancelAction" class="btn ghost" type="button">取消</button>
+      </div>
+      <pre id="actionStatus" class="status">—</pre>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>SaveDeck 映射</h2>
+    <p class="hint">选择云同步里指向 SaveDeck 镜像的 WebDAV 方式；mod 使用该方式自己的远程根目录，不再需要单独的兼容目录。建议使用专用的 SaveDeck 同步方式。</p>
+    <p class="hint">本地键格式是 <span class="mono">平台/本地存档名</span>，例如 <span class="mono">GBA/龙珠大冒险</span>。右侧填写 SaveDeck 的 <span class="mono">romStem</span> 或 <span class="mono">name</span>。</p>
+    <form id="configForm">
+      <div class="grid">
+        <label>WebDAV 同步方式
+          <select id="configProfile"></select>
+        </label>
+        <label>模式
+          <select id="configMode">
+            <option value="diagnose">diagnose（只读诊断）</option>
+            <option value="two-way">two-way（双向）</option>
+            <option value="pull">pull（只拉取）</option>
+            <option value="push">push（只推送）</option>
+          </select>
+        </label>
+        <label>冲突策略
+          <select id="configConflict">
+            <option value="newest">newest（较新者）</option>
+            <option value="local">local（本地优先）</option>
+            <option value="remote">remote（远端优先）</option>
+            <option value="ask">ask（冲突时弹窗）</option>
+          </select>
+        </label>
+        <label class="check"><input id="configMatchName" type="checkbox"> romStem 不匹配时按 name 匹配</label>
+        <label class="check"><input id="configCreate" type="checkbox"> 允许自动创建 SaveDeck archive</label>
+      </div>
+
+      <div class="alias-head">
+        <h3>映射列表</h3>
+        <button id="addAlias" class="btn" type="button">+ 添加一行</button>
+      </div>
+      <div id="aliasList" class="alias-list"></div>
+
+      <div class="alias-head">
+        <h3>平台映射</h3>
+        <button id="addPlatformMap" class="btn" type="button">+ 添加一行</button>
+      </div>
+      <p class="hint">左边填 SaveDeck 的 <span class="mono">game.json.platform</span>，右边填本机 <span class="mono">Saves/</span> 下的平台目录。例如 <span class="mono">GBA hack → GBA</span>；SaveDeck archive 内的 platform 字段不会被修改。</p>
+      <div id="platformMapList" class="alias-list"></div>
+      <div class="actions">
+        <button id="saveConfig" class="btn primary" type="button">保存配置</button>
+        <button id="reloadConfig" class="btn ghost" type="button">重新读取</button>
+      </div>
+      <pre id="configStatus" class="status">—</pre>
+    </form>
+  </section>
+
+  <script src="/mod-ui/sdk.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

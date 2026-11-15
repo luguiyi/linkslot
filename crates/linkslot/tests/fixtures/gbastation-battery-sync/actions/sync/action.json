@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "name": "电池与游玩时间同步（长按 Y）",
+  "timing": "manual",
+  "enabled": true,
+  "order": 100,
+  "ui": {
+    "animation": "cloud_sync",
+    "title": "同步 GBAStation",
+    "units": [
+      "sav"
+    ],
+    "show_cloud": true
+  }
+}

@@ -1,0 +1,37 @@
+# 发布包组成契约（由 build/dist.sh 实现，build/verify.sh 校验产物）
+#
+# 本文件是"卡里应该有什么"的可读清单；脚本不解析它，避免再引入一套 TOML 解析。
+# 改动这里时必须同步改 dist.sh 与 verify.sh。
+
+[package]
+name = "linkslot"
+artifact = "linkslot-v{version}-{device}.zip"
+
+[files.default]
+# 卡内路径 = 来源
+"System/linkSlot/bin/linkslot" = "<target>/release/slot"
+"System/linkSlot/bin/linkslot_sync" = "<target>/linkslot/linkSlot"
+"README-ZH-CN.md" = "README-ZH-CN.md"
+"linkSlot/version.json" = "<generated>"
+
+[dirs.default]
+# 整目录复制
+"System" = "card/System"
+"Config" = "card/Config"
+"Overlay" = "card/Overlay"
+"System/licenses" = "licenses"
+
+[dirs.generated]
+# 由 skeleton.txt 生成的空目录（其余目录由 System/Config/card 覆盖）
+"Games" = "build/skeleton.txt"
+"Saves" = "build/skeleton.txt"
+"States" = "build/skeleton.txt"
+"Labels" = "build/skeleton.txt"
+
+[compliance]
+# 必须随包分发的合规件（缺一即视为发布不合格）
+required = [
+  "System/linkSlot/licenses/linkslot-deps.txt",
+  "System/linkSlot/licenses/<gpl core 的对应源码包与补丁>",
+  "System/linkSlot/licenses/mgba-<commit>.meta",
+]

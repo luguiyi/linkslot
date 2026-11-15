@@ -1,0 +1,58 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.96"
+license = "GPL-3.0-or-later"
+
+[workspace.dependencies]
+lz4_flex = { version = "0.11", default-features = false, features = ["std"] }
+png = "0.17"
+base64 = "0.23"
+fontdue = "0.9"
+libloading = "0.8"
+libc = "0.2"
+winit = "0.30"
+glutin = "0.32"
+glutin-winit = "0.5"
+raw-window-handle = "0.6"
+gl = "0.14"
+cpal = "0.15"
+gilrs = "0.11"
+tempfile = "3"
+unicode-normalization = "0.1"
+resvg = { version = "0.48", default-features = false }
+usvg = { version = "0.48", default-features = false }
+sha2 = "0.10"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.41", features = ["bundled"] }
+toml = "0.9"
+percent-encoding = "2"
+ureq = { version = "3", default-features = false }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+rustls-pemfile = "2"
+webpki-roots = "1"
+mlua = { version = "0.11", default-features = false }
+roxmltree = "0.21"
+
+[profile.device]
+inherits = "release"
+# Do NOT turn fat LTO on here: the v0.8.0 aarch64 build with `lto = "fat"`
+# produced a binary that was missing reachable boot/menu code and hung on the
+# device's splash screen. The working v0.7.x packages were non-LTO builds.
+lto = false
+codegen-units = 1
+
+# The linkSlot CLI is a separate, small binary built for the handheld: optimise
+# it for size and strip symbols, without touching the frontend's own profiles.
+[profile.linkslot]
+inherits = "release"
+opt-level = "s"
+lto = "fat"
+codegen-units = 1
+strip = "symbols"
+panic = "abort"

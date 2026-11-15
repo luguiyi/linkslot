@@ -1,0 +1,73 @@
+# 模拟器核心清单（构建期唯一事实来源）
+#
+# kind = "build"   → 用 cores/<id>/build.sh 现场编译（源码/补丁随仓库）；
+# kind = "vendor"  → 使用预编译产物：优先 vendor/<dylib>，缺失时回退本地
+#                    card/System/<dylib>（仅开发机，不随仓库分发）。
+#
+# 发布前必须满足：license_file 存在且非空、sha256 已固定、glibc_max ≤ 2.31。
+
+[core.mgba]
+kind = "build"
+builder = "cores/mgba/build.sh"
+commit = "e31759b24e7a4e3899285ff720d7b573ac328ae7"
+dylib = "mgba_libretro.so"
+machines = ["GBA"]
+license = "MPL-2.0"
+license_file = "licenses/mgba-MPL-2.0.txt"
+glibc_max = "2.31"
+
+[core.gpsp]
+kind = "build"
+builder = "cores/gpsp/build.sh"
+commit = "7b2dd37394e2822110cacef321e9bb291a305b77"
+dylib = "gpsp_libretro.so"
+machines = ["GBA"]
+license = "GPL-2.0"
+license_file = "licenses/gpsp-GPL-2.0.txt"
+glibc_max = "2.31"
+# GPL-2.0 §3(a) 对应源码：vendor/gpsp-src.tar.gz，由构建脚本下载并随包分发。
+
+[core.fceumm]
+kind = "build"
+builder = "cores/fceumm/build.sh"
+commit = "ac0d00a7fc01166f84c7bac01d1084ebfd2b865e"
+dylib = "fceumm_libretro.so"
+machines = ["FC"]
+license = "GPL-2.0"
+license_file = "licenses/fceumm-GPL-2.0.txt"
+glibc_max = "2.31"
+# GPL-2.0 §3(a) 对应源码：vendor/fceumm-src.tar.gz。
+
+[core.snes9x]
+kind = "build"
+builder = "cores/snes9x/build.sh"
+commit = "fae2fea08f74180759ef540ee94259213f503480"
+dylib = "snes9x_libretro.so"
+machines = ["SFC"]
+license = "GPL-2.0"
+license_file = "licenses/snes9x-GPL-2.0.txt"
+glibc_max = "2.31"
+# GPL-2.0 §3(a) 对应源码：vendor/snes9x-src.tar.gz，由构建脚本下载并随包分发。
+[core.supafaust]
+kind = "vendor"
+optional = true
+dylib = "supafaust_libretro.so"
+machines = ["SFC"]
+# 已知实测：该二进制要求 GLIBC_2.34，高于设备基线 2.31。
+glibc_max = "2.34"
+sha256 = "cba32007baeab16f424ad12edaadb212f36336df78c6f96a4b12b4c974f08bee"
+size = 1138552
+license = "unknown"
+license_file = ""
+# optional = true：不随发布包分发（许可证未知、GLIBC 过高），用户可自行把
+# supafaust_libretro.so 放进 System/ 使用。移除该标记前必须补齐许可证与对应源码。
+
+[core.genesis_plus_gx]
+kind = "vendor"
+dylib = "genesis_plus_gx_libretro.so"
+machines = ["MD"]
+glibc_max = "2.31"
+sha256 = "8591e83f9032c1b735f5c082a35bd9247043f0e3de734320f28638fed41f585c"
+size = 12837328
+license = "GPL-2.0"
+license_file = "card/System/linkSlot/licenses/genesis_plus_gx-LICENSE.txt"

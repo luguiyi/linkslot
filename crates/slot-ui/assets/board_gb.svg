@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 273.6" width="240" height="273.6">
+  <defs>
+    <pattern id="fingers" width="5.6" height="18" patternUnits="userSpaceOnUse">
+      <rect x="1" width="3.6" height="18" rx=".5" fill="#d4a93c"/>
+    </pattern>
+    <pattern id="pins" width="3" height="3" patternUnits="userSpaceOnUse">
+      <rect x=".7" width="1.6" height="3" fill="#b3b3b8"/>
+    </pattern>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".22"/>
+      <stop offset=".25" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- outer cartridge shell: GB portrait, rounded top, grip at bottom -->
+  <path fill="#fe01fe" d="M9 5 H231 Q238 5 238 14 V244 L226 260 H14 L2 244 V14 Q2 5 9 5 Z"/>
+  <path fill="#fe02fe" d="M10 11 H230 V246 L223 259 H17 L10 246 Z"/>
+  <path fill="#fe03fe" d="M17 17 H223 V245 L217 255 H23 L17 245 Z"/>
+  <rect x="17" y="17" width="206" height="228" fill="url(#shade)"/>
+
+  <!-- PCB -->
+  <path fill="#ff00ff" d="M24 24 H216 Q223 24 223 31 V236 H17 V31 Q17 24 24 24 Z"/>
+  <path fill="#2f7f31" d="M25 27 H215 V233 H25 Z"/>
+  <path fill="#2f7f31" d="M29 31 H211 V229 H29 Z"/>
+
+  <!-- shell clip notches at both sides -->
+  <rect x="1" y="76" width="9" height="24" rx="2" fill="#fe02fe" stroke="#4a5057" stroke-width=".4"/>
+  <rect x="230" y="76" width="9" height="24" rx="2" fill="#fe02fe" stroke="#4a5057" stroke-width=".4"/>
+
+  <!-- mounting holes -->
+  <g fill="#123b18" stroke="#7fc77a" stroke-width=".6">
+    <circle cx="33" cy="40" r="3.2"/><circle cx="207" cy="40" r="3.2"/>
+    <circle cx="33" cy="213" r="3.2"/><circle cx="207" cy="213" r="3.2"/>
+  </g>
+  <g fill="#050706">
+    <circle cx="33" cy="40" r="1.2"/><circle cx="207" cy="40" r="1.2"/>
+    <circle cx="33" cy="213" r="1.2"/><circle cx="207" cy="213" r="1.2"/>
+  </g>
+
+  <!-- big central cavity for the one core -->
+  <rect x="76" y="28" width="88" height="76" rx="5" fill="#1b4b20" stroke="#6cc463" stroke-width=".8"/>
+  <rect x="82" y="34" width="76" height="64" rx="3" fill="#143a18" stroke="#2f6f31" stroke-width=".5"/>
+  <rect x="86" y="28" width="68" height="3" fill="url(#pins)"/>
+  <rect x="86" y="101" width="68" height="3" fill="url(#pins)"/>
+
+
+  <!-- capacitors right -->
+  <g>
+    <circle cx="204" cy="96" r="7" fill="#5b5b5e" stroke="#b9b9bc" stroke-width=".5"/>
+    <circle cx="204" cy="96" r="4" fill="#29292b"/>
+    <circle cx="204" cy="118" r="7" fill="#5b5b5e" stroke="#b9b9bc" stroke-width=".5"/>
+    <circle cx="204" cy="118" r="4" fill="#29292b"/>
+    <circle cx="204" cy="140" r="7" fill="#5b5b5e" stroke="#b9b9bc" stroke-width=".5"/>
+    <circle cx="204" cy="140" r="4" fill="#29292b"/>
+    <rect x="201" y="124" width="6" height="10" fill="#444446"/>
+  </g>
+
+  <!-- test pads -->
+  <g fill="#d4a93c">
+    <circle cx="34" cy="102" r="2"/><circle cx="34" cy="120" r="2"/><circle cx="34" cy="138" r="2"/>
+  </g>
+
+  <!-- traces from connector to core cavity -->
+  <g fill="none" stroke="#6cc463" stroke-width=".45" stroke-linecap="round" opacity=".75">
+    <path d="M34 228 V206 H54 V158"/>
+    <path d="M42 228 V212 H64 V158"/>
+    <path d="M50 228 V218 H72 V158"/>
+    <path d="M58 228 V222 H80 V158"/>
+    <path d="M66 228 V220 H86 V158"/>
+    <path d="M74 228 V214 H92 V158"/>
+    <path d="M82 228 V210 H98 V158"/>
+    <path d="M90 228 V204 H106 V158"/>
+    <path d="M98 228 V198 H112 V158"/>
+    <path d="M106 228 V192 H120 V158"/>
+    <path d="M114 228 V188 H128 V158"/>
+    <path d="M122 228 V196 H136 V158"/>
+    <path d="M130 228 V202 H144 V158"/>
+    <path d="M138 228 V208 H154 V158"/>
+    <path d="M146 228 V214 H164 V158"/>
+    <path d="M154 228 V218 H174 V158"/>
+    <path d="M162 228 V222 H184 V158"/>
+    <path d="M170 228 V220 H192 V158"/>
+    <path d="M178 228 V214 H200 V158"/>
+    <path d="M186 228 V208 H208 V158"/>
+    <path d="M194 228 V202 H210 V158"/>
+    <path d="M202 228 V196 H210 V158"/>
+  </g>
+  <g fill="none" stroke="#6cc463" stroke-width=".45" opacity=".5">
+    <path d="M52 34 H88 V48"/>
+    <path d="M60 34 H96 V48"/>
+    <path d="M68 34 H104 V48"/>
+    <path d="M170 34 H146 V48"/>
+    <path d="M178 34 H154 V48"/>
+    <path d="M186 34 H162 V48"/>
+    <path d="M196 62 H214 V78"/>
+    <path d="M196 150 H214 V160"/>
+  </g>
+
+  <!-- central game-name recess -->
+  <rect x="58" y="108" width="124" height="74" rx="4" fill="#1a1a1a" stroke="#6cc463" stroke-width=".5"/>
+  <rect x="64" y="114" width="112" height="62" rx="2" fill="#202020"/>
+
+  <!-- 32 gold fingers -->
+  <rect x="26" y="234" width="188" height="17" fill="url(#fingers)"/>
+  <rect x="24" y="232" width="192" height="2" fill="#c9a13a" opacity=".7"/>
+  <rect x="24" y="251" width="192" height="1" fill="#9b7a27" opacity=".8"/>
+
+  <!-- bottom shell grip -->
+  <rect x="32" y="255" width="176" height="6" rx="2" fill="#fe02fe" stroke="#4a5057" stroke-width=".4"/>
+</svg>
